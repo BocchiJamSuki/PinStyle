@@ -14,7 +14,7 @@ if [ ! -x "$ENV_PREFIX/bin/python" ]; then
 fi
 # shellcheck disable=SC1091
 [ -f /etc/network_turbo ] && source /etc/network_turbo
-"$ENV_PREFIX/bin/python" -m pip install -r requirements.txt
+"$ENV_PREFIX/bin/python" -m pip install --timeout 60 --retries 10 -r requirements.txt
 "$ENV_PREFIX/bin/python" -m pip install -e .
 "$ENV_PREFIX/bin/python" -m pip freeze --exclude-editable > requirements.lock.txt
 echo "SETUP_DONE"
