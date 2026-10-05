@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+build/
+dist/
+
+# Local environments and secrets
+.venv/
+.env
+.env.*
+*.pem
+*.key
+secrets/
+
+# Large or generated files: kept on the GPU machine's persistent disk, not in git
+models/
+runs/
+data/
+hf_cache/
+third_party/
+assets/debug/
+local_runs/
+
+# OS and editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

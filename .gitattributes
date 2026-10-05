@@ -1,0 +1,16 @@
+# The repo is used on Linux (the GPU machine): keep text files LF everywhere.
+* text=auto eol=lf
+
+# Binary assets
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.gif binary
+*.psd binary
+*.kra binary
+*.ora binary
+*.pdf binary
+*.safetensors binary
+*.bin binary
+*.pt binary
