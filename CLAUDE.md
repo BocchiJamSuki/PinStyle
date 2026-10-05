@@ -72,7 +72,13 @@ Before working, read:
   3. update `docs/STATUS.md` (what is done, what is needed from the owner, how to resume) and push again;
   4. run `shutdown` on the server over SSH.
 
-  Never shut down mid-job or mid-push, and never release the instance.
+  Never shut down mid-job or mid-push, and never release the instance. Keep the server on during short gaps between GPU work (for example D1 before D2). Shut down only if it will sit idle for more than about 2 hours, if all autonomous work is done, or if blocked on the owner.
+- **Model downloads:** try in this order:
+  1. Hugging Face directly;
+  2. Hugging Face with `source /etc/network_turbo`;
+  3. the HF mirror (`HF_ENDPOINT`) or ModelScope's copy of the same model.
+
+  Whatever the source, check the pinned revision and the sha256 of every file against `models/MANIFEST.json`.
 
 ## Conventions
 

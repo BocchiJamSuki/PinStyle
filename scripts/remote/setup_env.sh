@@ -9,7 +9,8 @@ export CONDA_PKGS_DIRS=/root/autodl-tmp/conda_pkgs
 export PIP_CACHE_DIR=/root/autodl-tmp/pip_cache
 
 if [ ! -x "$ENV_PREFIX/bin/python" ]; then
-  "$CONDA" create -y -p "$ENV_PREFIX" python=3.11 pip
+  "$CONDA" create -y -p "$ENV_PREFIX" --override-channels \
+    -c https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main python=3.11 pip
 fi
 # shellcheck disable=SC1091
 [ -f /etc/network_turbo ] && source /etc/network_turbo
