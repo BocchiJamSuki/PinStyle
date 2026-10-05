@@ -1,0 +1,21 @@
+# Pinned pip dependencies (demo scope). PyTorch wheels come from the cu130 index
+# (NVIDIA driver >= 580). Re-frozen after D0 into requirements.lock.txt.
+--extra-index-url https://download.pytorch.org/whl/cu130
+torch==2.14.1
+torchvision==0.29.1
+diffusers==0.40.0
+transformers==5.18.0
+accelerate==1.15.0
+huggingface_hub==2.1.1
+safetensors
+gradio==6.29.1
+openai==3.24.0
+google-genai==2.28.0
+opencv-python-headless
+pillow
+numpy
+omegaconf
+scikit-image
+pytest
+pytest-socket==0.8.1
+ruff

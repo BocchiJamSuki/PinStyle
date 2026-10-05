@@ -1,0 +1,29 @@
+# Demo model set (ADR-0006, THIRD_PARTY §0). Revisions are pinned by download_models.py
+# into models/MANIFEST.json (the resolved commit SHA of each repo at download time).
+paths:
+  models: models
+  runs: runs
+
+models:
+  sdxl:
+    repo: stabilityai/stable-diffusion-xl-base-1.0
+    allow: ["model_index.json", "scheduler/*", "tokenizer/*", "tokenizer_2/*",
+            "text_encoder/config.json", "text_encoder/model.fp16.safetensors",
+            "text_encoder_2/config.json", "text_encoder_2/model.fp16.safetensors",
+            "unet/config.json", "unet/diffusion_pytorch_model.fp16.safetensors"]
+  vae:
+    repo: madebyollin/sdxl-vae-fp16-fix
+    allow: ["config.json", "diffusion_pytorch_model.safetensors"]
+  controlnet_lineart:
+    repo: TheMistoAI/MistoLine
+    allow: ["config.json", "diffusion_pytorch_model.fp16.safetensors"]
+  ip_adapter:
+    repo: h94/IP-Adapter
+    allow: ["sdxl_models/ip-adapter-plus_sdxl_vit-h.safetensors",
+            "models/image_encoder/config.json", "models/image_encoder/model.safetensors"]
+  sam2:
+    repo: facebook/sam2.1-hiera-large
+    allow: ["config.json", "model.safetensors", "preprocessor_config.json", "processor_config.json"]
+  dinov2:
+    repo: facebook/dinov2-with-registers-large
+    allow: ["config.json", "model.safetensors", "preprocessor_config.json"]

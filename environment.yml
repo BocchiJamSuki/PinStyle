@@ -1,29 +1,12 @@
-# Conda env for PinStyle (demo scope). Every direct dependency is pinned; after D0 the
-# file is re-exported so transitive packages are pinned too. Linux + NVIDIA driver >= 580 (cu130).
+# Conda env for PinStyle (demo scope): Python 3.11 + pinned pip packages.
+# Exact transitive pins are frozen into requirements.lock.txt after D0.
+# On the AutoDL server use scripts/remote/setup_env.sh (mirrors + academic acceleration).
 name: pinstyle
 channels:
-  - conda-forge
+  - defaults
 dependencies:
   - python=3.11
   - pip
   - pip:
-      - --extra-index-url https://download.pytorch.org/whl/cu130
-      - torch==2.14.1
-      - torchvision==0.29.1
-      - diffusers==0.40.0
-      - transformers==5.18.0
-      - accelerate==1.15.0
-      - huggingface_hub==2.1.1
-      - safetensors
-      - gradio==6.29.1
-      - openai==3.24.0
-      - google-genai==2.28.0
-      - opencv-python-headless
-      - pillow
-      - numpy
-      - omegaconf
-      - scikit-image
-      - pytest
-      - pytest-socket==0.8.1
-      - ruff
+      - -r requirements.txt
       - -e .
