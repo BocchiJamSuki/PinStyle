@@ -64,8 +64,8 @@ See [ADR-0008](decisions/0008-execution-topology.md).
 | # | Milestone | Status | Eng. days (est.) | GPU-h (est.) | Needs from the owner |
 |---|---|---|---|---|---|
 | H | Docs updated for the demo scope; repo initialized | ✅ 2026-10-05 (laptop) | – | – | git remote URL, to push |
-| D0 | Environment + CUDA smoke test | ⬜ next, on the box | 0.5–1 | < 1 | the persistent path on the box |
-| D1 | CC image shortlist (approval gate) | ⬜ | 0.5–1 | 0 | approve the shortlist |
+| D0 | Environment + CUDA smoke test | 🔄 env install on the server | 0.5–1 | < 1 | the persistent path on the box |
+| D1 | CC image shortlist (approval gate) | ✅ 2026-10-06: 8 Pepper&Carrot works by David Revoy (CC BY 4.0), 3 characters, approved under delegation. Source files have no line-art layers (only paint layers; checked ep35 pages and the 2019 Shichimi artwork), so all drafts are `simulated` | 0.5–1 | 0 | approve the shortlist |
 | D2 | Global path | ⬜ | 1–1.5 | 1–2 | – |
 | D3 | Engine A + detail case end to end (CLI) | ⬜ | 2–3 | 2–4 | – |
 | D4 | Gradio app + concept screens | ⬜ | 1.5–2.5 | ~1 | UI feedback |

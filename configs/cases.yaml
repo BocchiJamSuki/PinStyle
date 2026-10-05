@@ -1,0 +1,32 @@
+# Demo cases (D2+). The draft is simulated from `source` (draft_source = simulated); the
+# reference is a *different* work by the same artist of the same character. The source
+# image is the ground truth for objective accessory scores.
+cases:
+  pepper_bergen:
+    source: pc_pepper_bergen_2024
+    reference: pc_pepper_portrait_2017
+    draft_source: simulated
+    draft_mode: lines
+    prompt: "a finished digital painting of a girl with long brown hair in a traditional Norwegian dress with a cat, red ribbon in her hair, high quality illustration"
+    accessories: [red hair ribbon, silver brooch]
+  pepper_bergen_ref2021:
+    source: pc_pepper_bergen_2024
+    reference: pc_pepper_2021
+    draft_source: simulated
+    draft_mode: lines
+    prompt: "a finished digital painting of a girl with long brown hair in a traditional Norwegian dress with a cat, red ribbon in her hair, high quality illustration"
+    accessories: [red hair ribbon, silver brooch]
+  shichimi:
+    source: pc_shichimi_concept_2015
+    reference: pc_shichimi_torreya_2025
+    draft_source: simulated
+    draft_mode: lines
+    prompt: "a finished digital painting of a girl with white hair in a red kimono with a fox, white hair ornament, high quality illustration"
+    accessories: [white hair ornament]
+  coriander:
+    source: pc_coriander_concept_2015
+    reference: pc_coriander_queen_2019
+    draft_source: simulated
+    draft_mode: lines
+    prompt: "a finished digital painting of a girl with curly hair wearing a top hat and coat, high quality illustration"
+    accessories: [top hat band, jabot]
