@@ -33,8 +33,18 @@ from omegaconf import OmegaConf
 ROOT = Path(__file__).resolve().parents[1]
 HF_ENDPOINT = os.environ.get("HF_ENDPOINT", "https://hf-mirror.com").rstrip("/")
 MS_ENDPOINT = "https://www.modelscope.cn"
-ARIA = ["aria2c", "-q", "-c", "--file-allocation=none", "-x16", "-s16", "-k2M",
-        "--max-tries=5", "--retry-wait=3", "--auto-file-renaming=false"]
+ARIA = [
+    "aria2c",
+    "-q",
+    "-c",
+    "--file-allocation=none",
+    "-x16",
+    "-s16",
+    "-k2M",
+    "--max-tries=5",
+    "--retry-wait=3",
+    "--auto-file-renaming=false",
+]
 MIN_OK_MBPS = 10.0
 
 
@@ -73,8 +83,11 @@ def hf_files(repo: str, revision: str, allow: list[str]) -> dict[str, dict]:
         if not any(fnmatch.fnmatch(name, p) for p in allow):
             continue
         lfs = s.get("lfs")
-        out[name] = ({"size": lfs["size"], "sha256": lfs["sha256"]} if lfs
-                     else {"size": s["size"], "git_sha1": s["blobId"]})
+        out[name] = (
+            {"size": lfs["size"], "sha256": lfs["sha256"]}
+            if lfs
+            else {"size": s["size"], "git_sha1": s["blobId"]}
+        )
     missing = [p for p in allow if not any(fnmatch.fnmatch(n, p) for n in out)]
     if missing:
         raise RuntimeError(f"{repo}@{revision}: no files match {missing}")
@@ -89,16 +102,18 @@ def source_urls(spec, revision: str, name: str) -> dict[str, str]:
 
 
 def probe(url: str, seconds: int) -> float:
-    """MB/s over a short resumable-download probe (0 on failure)."""
+    """MB/s over a short download probe (0 on failure). Counts allocated blocks: aria2c writes
+    segments at offsets, so st_size of the sparse file overstates progress."""
     tmp = Path(tempfile.mkdtemp(prefix="probe_"))
     t0 = time.monotonic()
     try:
-        subprocess.run([*ARIA, "-d", str(tmp), "-o", "f", url], timeout=seconds,
-                       capture_output=True)
+        subprocess.run(
+            [*ARIA, "-d", str(tmp), "-o", "f", url], timeout=seconds, capture_output=True
+        )
     except subprocess.TimeoutExpired:
         pass
     dt = time.monotonic() - t0
-    got = sum(p.stat().st_size for p in tmp.rglob("*") if p.is_file())
+    got = sum(p.stat().st_blocks * 512 for p in tmp.rglob("*") if p.is_file())
     shutil.rmtree(tmp, ignore_errors=True)
     return got / dt / 2**20
 
@@ -124,8 +139,11 @@ def main() -> None:
     for key, spec in cfg.models.items():
         if only and key not in only:
             continue
-        revision = (spec.get("revision") or manifest.get(key, {}).get("revision")
-                    or get_json(f"{HF_ENDPOINT}/api/models/{spec.repo}")["sha"])
+        revision = (
+            spec.get("revision")
+            or manifest.get(key, {}).get("revision")
+            or get_json(f"{HF_ENDPOINT}/api/models/{spec.repo}")["sha"]
+        )
         expected = hf_files(spec.repo, revision, list(spec.allow))
         local = models_dir / key
         todo = [n for n in expected if not verify(local / n, expected[n])]
@@ -166,10 +184,14 @@ def main() -> None:
             else:
                 raise RuntimeError(f"{key}/{name}: no source produced the expected bytes")
 
-        manifest[key] = {"repo": spec.repo, "revision": revision,
-                         "modelscope": spec.get("modelscope"), "probe_mbps": speeds,
-                         "verified_against": f"HF API {spec.repo}@{revision} (via {HF_ENDPOINT})",
-                         "files": files}
+        manifest[key] = {
+            "repo": spec.repo,
+            "revision": revision,
+            "modelscope": spec.get("modelscope"),
+            "probe_mbps": speeds,
+            "verified_against": f"HF API {spec.repo}@{revision} (via {HF_ENDPOINT})",
+            "files": files,
+        }
         manifest_path.write_text(json.dumps(manifest, indent=2))
         print(f"{key}: {spec.repo}@{revision[:10]} verified ({len(files)} files)", flush=True)
     print("MANIFEST written", flush=True)
