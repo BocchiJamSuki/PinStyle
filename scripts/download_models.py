@@ -39,7 +39,8 @@ MIN_OK_MBPS = 10.0
 
 
 def get_json(url: str) -> dict:
-    with urllib.request.urlopen(url, timeout=30) as r:
+    req = urllib.request.Request(url, headers={"User-Agent": "pinstyle-download/1.0"})
+    with urllib.request.urlopen(req, timeout=30) as r:
         return json.load(r)
 
 
