@@ -16,8 +16,8 @@ The full plan (verification, architecture, M0–M8) was written on 2026-10-05. T
 3. **A Gradio app:** upload, click point pairs, set strength, run, compare before and after, and a simple version list.
 4. **One detail case end to end:** a small accessory that fails under global transfer and is recovered with point pairs. A failure means the accessory is lost or misrendered (wrong colour or material, garbled shape).
 5. **A comparison runner** covering:
-   - OpenAI and Gemini (paid tier), via their APIs;
-   - Midjourney, by manual import (optional: only if the owner confirms Stealth mode);
+   - ~~OpenAI and Gemini~~ → Tencent `hy-image-v3` and Alibaba `qwen-image-edit-plus`, via their APIs ([ADR-0009](0009-domestic-image-providers.md), 2026-10-07);
+   - Midjourney: skipped;
    - global-only;
    - PinStyle.
 

@@ -1,6 +1,6 @@
 # 0004 — External image services: provider selection and data policy
 
-- Status: **Accepted for the demo** (2026-10-05, owner decision), narrowed as described in the next section.
+- Status: **Accepted for the demo** (2026-10-05, owner decision). The **provider choice is superseded by [ADR-0009](0009-domestic-image-providers.md)** (2026-10-07): OpenAI and Gemini are no longer used. The data rules and per-call records below still apply.
 - Affects: brief §7.6; PLAN Part A, D5 (the full-plan M6.7 and M8.1 are future work).
 
 ## Demo decision (2026-10-05)

@@ -44,8 +44,7 @@ These are the latest versions on 2026-10-05. Exact pins go in `environment.yml` 
 | transformers | 5.18.0 | Native SAM 2 (`Sam2Model`, `Sam2Processor`): several points per object, negative points, several objects, and embedding reuse. |
 | accelerate / huggingface_hub | 1.15.0 / 2.1.1 | |
 | gradio | 6.29.1 (Apache-2.0) | `gr.ImageSlider` is built in (before/after). `gr.Image.select` returns click coordinates (`evt.index` = [x, y]). Set `GRADIO_ANALYTICS_ENABLED=False`; `GRADIO_SERVER_NAME` defaults to 127.0.0.1. |
-| openai | 3.24.0 (Apache-2.0) | The Images API edits endpoint takes several input images, and the response includes `model`. |
-| google-genai | 2.28.0 (Apache-2.0) | The image-generation docs now use `client.interactions.create(...)`, with the image in `output_image.data`. |
+| requests | 2.34.2 (Apache-2.0) | The D5 providers call the REST APIs directly, with no vendor SDK (ADR-0009). |
 | pytest-socket | 0.8.1 (MIT) | |
 
 The newest major versions (transformers 5.x, huggingface_hub 2.x) may not work with diffusers 0.40. If so, D0 picks the newest compatible set and records why.
@@ -54,9 +53,11 @@ The newest major versions (transformers 5.x, huggingface_hub 2.x) may not work w
 
 | Service | Default model → alternatives | Notes |
 |---|---|---|
-| OpenAI Images API | `gpt-image-2.5-sunburst` → `gpt-image-2.5-flare`, `gpt-image-2` (snapshot `gpt-image-2-2026-04-21`) | Third-party reviews say Sunburst targets edit precision and detail and Flare is faster, at the same price. Inputs are not used for training by default (§7). |
-| Google Gemini API, **paid tier** | `gemini-3-pro-image` → `gemini-3.1-flash-image` (up to 3 style-reference images) | The unpaid tier allows training and human review, so it is not allowed (§7). Outputs carry SynthID. |
-| Midjourney (optional) | manual import | Skipped unless the owner confirms a plan with Stealth mode (CC BY attribution). The official ToS could not be fetched automatically. |
+| ~~OpenAI Images API~~ (dropped 2026-10-07, ADR-0009) | `gpt-image-2.5-sunburst` → `gpt-image-2.5-flare`, `gpt-image-2` (snapshot `gpt-image-2-2026-04-21`) | Third-party reviews say Sunburst targets edit precision and detail and Flare is faster, at the same price. Inputs are not used for training by default (§7). |
+| ~~Google Gemini API, paid tier~~ (dropped 2026-10-07) | `gemini-3-pro-image` → `gemini-3.1-flash-image` (up to 3 style-reference images) | The unpaid tier allows training and human review, so it is not allowed (§7). Outputs carry SynthID. |
+| Midjourney | – | Skipped (owner, 2026-10-07). |
+| **Tencent Cloud TokenHub** (checked 2026-10-07) | **`hy-image-v3`** (Hy-Image-3.0) → `hy-image-v3.5-preview` | `POST https://tokenhub.tencentmaas.com/v1/wand/hunyuan-image/v3-generation`, Bearer key, synchronous. Takes 0–3 reference images (URL or base64, PNG/JPEG, ≤ 10 MB). Output sides are 512–2048 px with an area ≤ 1024², one image per call. Seed range [1, 2³²−1]. The result URL is in `data[n].url` and expires after 12 h. Price: 20,000 output tokens per image at CNY 10 per million tokens, so **CNY 0.2 per image**. The 3.5 preview takes up to 20 inputs at CNY 0.15–0.2 per image, but it is a preview whose behaviour may change, so it is only the alternative. The key was validated with the free `GET /v1/models`, which lists both models. |
+| **Alibaba Cloud Model Studio (百炼), Beijing** (checked 2026-10-07) | **`qwen-image-edit-plus-2025-12-15`** (dated snapshot) → `qwen-image-edit-max-2026-01-16`, `qwen-image-2.0-pro-2026-06-22`, `wan2.7-image` | `POST https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation`, Bearer key. Takes 1–3 input images (≤ 10 MB, 384–3072 px). `n` is 1–6 (we use 1) and `size` is "W*H" with sides of 512–2048 px. Result URLs expire after 24 h. Price: **CNY 0.2 per image** (Beijing). Instruction editing over several images matches the draft + style-reference task exactly. The key was validated with the free `GET /compatible-mode/v1/models`. The international endpoint rejects it, so the key belongs to the Beijing region. Prices for 2.0-pro and edit-max were not found on the public pages, so those models stay alternatives. |
 
 Use dated snapshot IDs where providers offer them (e.g. `gpt-image-2.5-sunburst-2026-09-08`). The exact IDs are verified on the day of the run.
 
@@ -265,8 +266,10 @@ Checked on 2026-10-05. Model names change often, so the runner records the exact
 | Stability AI | Style Transfer, `POST /v2beta/stable-image/control/style-transfer`, with `init_image` (content) and `style_image` (per the API reference and AWS Bedrock docs; to verify in M6) | one content image + one style image | ToS (effective 2026-09-30): Stability may use content to improve and develop its services, and you can **opt out** of training on your inputs and outputs. You warrant that you hold the rights to what you submit. Outputs may not be used to train competing models. | ⚠️ only after opting out |
 | Black Forest Labs | FLUX 3 Image (up to 10 references), FLUX.2 [pro]/[flex]/[max]/[klein], FLUX.1 Kontext [pro]/[max] | multi-reference (up to 10, per the docs) | FLUX API Service Terms (revised 2026-08-04): the developer grants BFL a "fully paid, royalty-free, perpetual, irrevocable, worldwide, non-exclusive, and fully sublicensable" license to use Input and Output to operate the service, improve products and develop new ones. **That document offers no opt-out.** Zero data retention is reportedly available for enterprise clients (not verified). | ❌ off unless the owner consents per image |
 | Midjourney | no public API, so outputs are imported manually | – | The official ToS could not be fetched automatically (HTTP 403 on docs.midjourney.com and midjourney.com). Third-party summaries from 2026 describe a perpetual, worldwide, sublicensable, irrevocable license to Midjourney over prompts (including image prompts) and outputs, with images public by default unless Stealth mode is on (higher plans). **The owner must read the official ToS before use.** | ⚠️ manual only, owner's own works, Stealth mode |
+| **Tencent Cloud TokenHub** (added 2026-10-07; **used in D5**) | `hy-image-v3`, `hy-image-v3.5-preview`; `tokenhub.tencentmaas.com` | 0–3 (v3), ≤ 20 (3.5 preview) | Tencent Cloud's TokenHub service terms: customer data is kept only as long as needed to provide the service; afterwards Tencent stops using it, or returns or deletes it on instruction. No statement that API inputs train models was found; the FAQ "does TokenHub use my data to train models" exists, but its answer could not be fetched (re-check on the day of the run). | **Used** (ADR-0009) |
+| **Alibaba Cloud Model Studio** (added 2026-10-07; **used in D5**) | `qwen-image-edit-plus-2025-12-15` and others; `dashscope.aliyuncs.com` (Beijing) | 1–3 | Model Studio's data-use principles: input and output data from API calls are not used for model training or optimization. The Coding Plan is an exception, but we do not use it. Result URLs expire after 24 h. | **Used** (ADR-0009) |
 
-Not checked; candidates if broader coverage is wanted: Adobe Firefly Services, Ideogram, Recraft, Runway, ByteDance Seedream, Alibaba Qwen-Image-Edit.
+Not checked; candidates if broader coverage is wanted: Adobe Firefly Services, Ideogram, Recraft, Runway, ByteDance Seedream (also on TokenHub as `seedream-image-v5.0-*`).
 
 Rules, enforced by `pinstyle.external` (ADR-0004):
 
@@ -441,3 +444,10 @@ Rules, enforced by `pinstyle.external` (ADR-0004):
 - **Midjourney**
   - official ToS (HTTP 403 for automated fetch): https://docs.midjourney.com/hc/en-us/articles/32083055291277-Terms-of-Service
   - third-party summary: https://terms.law/ai-output-rights/midjourney/
+
+
+### 11.1 Sources added 2026-10-07
+
+- Tencent TokenHub: https://cloud.tencent.com/document/product/1823/135745 (Hy image API) · https://cloud.tencent.com/document/product/1823/130055 (prices, page dated 2026-09-24) · https://cloud.tencent.com/document/product/301/129852 (service terms)
+- Alibaba Model Studio: https://help.aliyun.com/zh/model-studio/qwen-image-edit-api · https://help.aliyun.com/en/model-studio/qwen-image-edit-plus (price, snapshots) · https://docs.agent.bailian.aliyun.com/en/resources/agreements (data use)
+- Model downloads: hf-mirror.com (HF API at pinned revisions; LFS sha256) · modelscope.cn (same-name repos)

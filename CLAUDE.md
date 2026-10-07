@@ -22,7 +22,11 @@ Before working, read:
   - approved by the owner before use.
 - **AI-generated images are for debugging only** (`assets/debug/`), never in the demo or the comparison.
 - **Local-first.** Generation code makes no network calls. Only `scripts/download_models.py` and the providers in `src/pinstyle/compare/` touch the network, and only when run explicitly. Tests run with sockets blocked.
-- **External services.** For every call, record:
+- **External services** (D5: Tencent `hy-image-v3`, Alibaba `qwen-image-edit-plus-2025-12-15`; Midjourney skipped; [ADR-0009](docs/decisions/0009-domestic-image-providers.md)).
+  - Keys live only in `.env` and are masked everywhere else (logs, run records, reports, commits).
+  - Responses are cached by input hash, and identical inputs are never sent twice. The spending ledger is `runs/d5/ledger.jsonl`.
+
+  For every call, record:
   - provider, exact model ID (plus the model field from the response), SDK version;
   - UTC time, prompt and parameters;
   - input and output hashes.
@@ -53,12 +57,13 @@ Before working, read:
 
 - **Autonomy.** Work through D0–D6 without milestone approvals. Record significant decisions as ADRs, and commit and push at the end of each milestone.
 - **Stop and ask the owner only for:**
-  - missing credentials (OpenAI key, Gemini paid-tier key, budget cap) or the Midjourney decision;
+  - missing or invalid credentials for the D5 providers (Tencent TokenHub, Alibaba Cloud Model Studio; [ADR-0009](docs/decisions/0009-domestic-image-providers.md));
+  - a D5 cost estimate above 80% of a provider's balance (each was topped up with CNY 5);
   - human steps (the D5 blind review, the D6 demo dry run);
   - the server being unreachable or powered off (ask the owner to start it in the AutoDL console);
   - hard blockers:
     - an external provider unavailable from the owner's region (never work around geographic restrictions; propose compliant options instead);
-    - spending beyond the budget;
+    - spending beyond the budget (80% of each provider's balance);
     - anything destructive outside the project directory.
 
   Write every request to the owner in `docs/STATUS.md` as well.
@@ -78,7 +83,7 @@ Before working, read:
   2. Hugging Face with `source /etc/network_turbo`;
   3. the HF mirror (`HF_ENDPOINT`) or ModelScope's copy of the same model.
 
-  Whatever the source, check the pinned revision and the sha256 of every file against `models/MANIFEST.json`.
+  In practice (measured 2026-10-07, ADR-0009), direct HF is unreachable and `network_turbo` gives about 1 MB/s. `scripts/download_models.py` therefore probes hf-mirror and ModelScope for each model with multi-connection `aria2c`, picks the faster one, and resumes after a restart. Whatever the source, every file is checked against the hashes of the pinned HF revision and recorded in `models/MANIFEST.json`.
 
 ## Conventions
 

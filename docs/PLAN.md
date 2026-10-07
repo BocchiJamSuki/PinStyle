@@ -24,8 +24,8 @@ A minimal working demo plus a comparison with existing services, for the researc
 3. **Gradio app:** upload a reference and a draft, click point pairs, set strength, run, compare before and after, and see a simple version list.
 4. **A detail case, end to end:** a small accessory (earrings, hairpin, ribbon, brooch, necklace, …) that fails under global transfer and is recovered with one or two point pairs. A failure means the accessory is either **lost** or **misrendered** (wrong colour or material, garbled shape). The line-art ControlNet often keeps outlines, so a surviving outline alone does not count as success.
 5. **Comparison runner:** the same inputs run through:
-   - OpenAI and Gemini (paid tier), via their APIs;
-   - Midjourney, by manual import;
+   - two Chinese image APIs: Tencent TokenHub `hy-image-v3` and Alibaba Cloud Model Studio `qwen-image-edit-plus-2025-12-15` ([ADR-0009](decisions/0009-domestic-image-providers.md); these replace OpenAI and Gemini);
+   - Midjourney: skipped;
    - our global-only path;
    - PinStyle.
 
@@ -69,7 +69,7 @@ See [ADR-0008](decisions/0008-execution-topology.md).
 | D2 | Global path | ⬜ | 1–1.5 | 1–2 | – |
 | D3 | Engine A + detail case end to end (CLI) | ⬜ | 2–3 | 2–4 | – |
 | D4 | Gradio app + concept screens | ⬜ | 1.5–2.5 | ~1 | UI feedback |
-| D5 | Comparison runner + report | ⬜ | 2–3 | 1–2 | OpenAI key; Gemini key on a paid-tier project; budget cap; reviews (~1–2 h); Midjourney only if you confirm Stealth mode |
+| D5 | Comparison runner + report | ⬜ | 2–3 | 1–2 | Keys in `.env` (done 2026-10-07); budget CNY 5 per provider, spend ≤ 80%; reviews (~1–2 h) |
 | D6 | README + 2-minute demo script | ⬜ | 0.5–1 | < 1 | a dry run |
 | **Total** | | | **8–13 (~2–3 weeks)** | **≈ 5–10** | API cost, rough estimate: ≈ $5–30 |
 
@@ -95,7 +95,7 @@ Legend: ⬜ not started · 🔄 in progress · ✅ done · ⛔ blocked.
     - torch 2.14.1 + torchvision 0.29.1, from the PyTorch **cu130** index (needs a recent driver) or **cu126** for older drivers;
     - diffusers 0.40.0, transformers 5.18.0, accelerate 1.15.0, huggingface_hub 2.1.1;
     - gradio 6.29.1;
-    - openai 3.24.0, google-genai 2.28.0;
+    - requests 2.34.2, for the D5 REST providers (ADR-0009);
     - pytest-socket 0.8.1;
     - plus opencv-python-headless, pillow, numpy, omegaconf, pytest and ruff.
 
@@ -222,16 +222,26 @@ Legend: ⬜ not started · 🔄 in progress · ✅ done · ⛔ blocked.
 
 - ours, global-only;
 - PinStyle (global + Engine A);
-- **OpenAI** Images API, `gpt-image-2.5-sunburst` (the edit-precision variant; configurable, e.g. to `gpt-image-2`);
-- **Gemini** API on a paid-tier project, `gemini-3-pro-image` (optionally `gemini-3.1-flash-image`, which has style-reference slots);
-- **Midjourney (optional):** skipped unless the owner confirms a plan with Stealth mode. If confirmed, results come in by manual import: a folder plus a metadata form (version, date, prompt, parameters).
+- **Tencent TokenHub** `hy-image-v3` (Hy-Image-3.0): takes 0–3 reference images, so the draft and the style reference go in one call; CNY 0.2 per image;
+- **Alibaba Cloud Model Studio** (Beijing) `qwen-image-edit-plus-2025-12-15` (a dated snapshot): takes 1–3 input images; CNY 0.2 per image;
+- **Midjourney:** skipped.
 
-Where a provider offers **dated model snapshots** (e.g. `gpt-image-2.5-sunburst-2026-09-08`), use them. Verify them on the day of the run and log them.
+Both run behind one generic `ImageProvider` interface in `src/pinstyle/compare/` (name, model ID, `estimate_cost`, `generate`), so other services can be added later. Use dated snapshots where offered. On the day of the run, check the model list and the price, and log them. The choice and the alternatives are in [ADR-0009](decisions/0009-domestic-image-providers.md).
+
+**Budget (owner, 2026-10-07):** each provider has a balance of CNY 5, and total spend per provider stays at or below 80% of it (CNY 4).
+
+- Before any paid call, compute the cost per call and the total estimate from the official price. If the estimate is over the cap, stop and ask the owner.
+- Request one output image per call, at the lowest resolution that serves the comparison: the 1024² area limit for `hy-image-v3`, and a long side of about 1024 px for Qwen.
+- Make exactly one trial call per provider before the real run, to confirm the response format.
+- Cache every response by (provider, model, input hashes, prompt, parameters). Never send a cached input again.
+- Keep a ledger at `runs/d5/ledger.jsonl`: time, provider, model, request hash, number of images, unit price and running total. It never contains keys.
+- At CNY 0.2 per image, 1 trial plus 3 attempts × 6 cases is 19 images, or CNY 3.8 per provider. If fewer cases fit the budget, drop cases and say so in the report.
+- Make no paid calls before D5. Free endpoints, such as the model list, may be used to validate the keys.
 
 **Protocol**
 
 - **Same inputs:** every method gets the same draft and reference, and the text-driven methods share one prompt template.
-- **At most 5 attempts per method and case:**
+- **Attempts per case:** at most 3 for each external service (owner, 2026-10-07), and at most 5 for our own methods:
   - attempt 1 uses the template;
   - later attempts may refine the prompt (services), the points/strength (PinStyle) or the seed/strength (global-only).
 - **Fairness rule (fixed):** from attempt 2 on, prompts to external services may name the accessory and where it is (e.g. "keep the red brooch on the collar"). This mirrors how PinStyle users indicate it with points.
@@ -307,8 +317,8 @@ The demo builds a subset of the full design; see [ARCHITECTURE.md §0](ARCHITECT
 ## Open items for the owner
 
 - The **git remote URL**, for the first push (or push it yourself).
-- **D5 keys:** an OpenAI API key, a Gemini API key on a paid-tier (billing-enabled) project, and a budget cap.
-- **Midjourney:** optional. It is skipped unless you confirm a plan with Stealth mode, because posting CC BY images publicly without attribution would conflict with the license.
+- **D5 keys:** provided on 2026-10-07 (Tencent TokenHub and Alibaba Model Studio) and stored in `.env`. Both were validated with the free model-list endpoints.
+- **Midjourney:** skipped.
 
 ---
 

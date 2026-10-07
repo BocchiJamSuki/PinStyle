@@ -22,7 +22,7 @@ Related docs: third-party facts and VRAM estimates in [THIRD_PARTY.md](THIRD_PAR
 | Point pairs | clicked by hand in the app | automatic suggestion (§8) |
 | UI | Gradio app | FastAPI + React (§10, §11) |
 | Governance | static concept screens | registry, gate, provenance, usage log (§12) |
-| Evaluation | comparison runner: OpenAI, Gemini (paid tier), Midjourney (manual), global-only, PinStyle | benchmarks B1–B3, baselines, metrics (§14) |
+| Evaluation | comparison runner: Tencent hy-image-v3, Alibaba qwen-image-edit-plus (ADR-0009), global-only, PinStyle | benchmarks B1–B3, baselines, metrics (§14) |
 | Models | all resident in fp16 (≈ 12 GB of weights, estimated) | tiered residency (§9) |
 | Export | PNG + run record | PNG / ORA / PSD with C2PA (§12.4, §13) |
 
@@ -45,7 +45,7 @@ PinStyle/
 │   ├── engine_a.py             LocalEngine implementation (§5.1)
 │   ├── pipeline.py             global → local → run record
 │   ├── cli.py                  `pinstyle global …`, `pinstyle run …`
-│   └── compare/                OpenAI and Gemini providers, manual import, attempt log, report (grid + tables)
+│   └── compare/                generic ImageProvider, Tencent/Alibaba providers, response cache, cost ledger, attempt log, report
 ├── app/                        Gradio app: Finish, Versions, Review and Governance-concept tabs
 ├── scripts/                    smoke_cuda · download_models · smoke_models · make_report
 ├── tests/                      unit tests (sockets blocked) + gpu-marked smoke tests
