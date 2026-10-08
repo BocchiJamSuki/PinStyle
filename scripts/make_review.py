@@ -88,7 +88,7 @@ def build(cfg) -> None:
 
 def reveal(labels_path: Path) -> None:
     key = json.loads((ROOT / "runs/d5/review_key.json").read_text())
-    labels = json.loads(labels_path.read_text())
+    labels = json.loads(labels_path.read_text(encoding="utf-8"))
     rows = []
     for iid, k in key.items():
         lab = labels.get(iid, {})

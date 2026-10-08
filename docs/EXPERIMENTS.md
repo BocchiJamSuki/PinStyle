@@ -229,3 +229,9 @@ The score under-counts, because the re-rendered ribbon does not sit exactly on t
 - 24 items: 2 cases × 4 methods × 3 attempts, shuffled with seed 20261008 and with the method names hidden.
 - The key is in `runs/d5/review_key.json`.
 - `--reveal` joins the labels after the review.
+
+## D5 — blind review and report (2026-10-08)
+
+- The owner labelled all 24 items (`local_runs/review/review_labels.json`). Its extra keys `sl`, `tl`, `query`, `gtrans` and `vote` come from a browser translation extension and are ignored.
+- Revealed with `python scripts/make_review.py --reveal …`, giving `runs/d5/review_revealed.csv`.
+- Report: `python scripts/make_report.py` writes `runs/d5/report/` (`report.md`, `summary.csv`, grids). It is copied, with interpretation, to `docs/D5_REPORT.md`.
