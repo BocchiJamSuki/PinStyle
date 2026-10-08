@@ -90,3 +90,28 @@ def inside(shape: tuple[int, int], box: tuple[int, int, int, int], band: int) ->
         x0 + (band if x0 > 0 else 0) : x1 - (band if x1 < w else 0),
     ] = True
     return keep
+
+
+def bbox_rect(mask: np.ndarray, margin: float, min_size: int) -> tuple[int, int, int, int]:
+    """Axis-aligned box (any aspect) around the mask, with a relative margin on each side,
+    at least min_size per side, clipped to the image. Used when the square box cannot hold
+    the region."""
+    ys, xs = np.nonzero(mask)
+    if len(xs) == 0:
+        raise ValueError("empty mask")
+    h, w = mask.shape
+    out = []
+    for lo, hi, n in ((xs.min(), xs.max(), w), (ys.min(), ys.max(), h)):
+        side = min(max((hi - lo + 1) * (1 + 2 * margin), min_size), n)
+        c = (lo + hi) / 2
+        a = int(np.clip(round(c - side / 2), 0, n - side))
+        out.append((a, int(a + side)))
+    (x0, x1), (y0, y1) = out
+    return x0, y0, x1, y1
+
+
+def work_size(box: tuple[int, int, int, int], long_side: int, step: int = 64) -> tuple[int, int]:
+    """Generation size for a crop: long side = long_side, aspect kept, multiples of step."""
+    bw, bh = box[2] - box[0], box[3] - box[1]
+    s = long_side / max(bw, bh)
+    return max(step, round(bw * s / step) * step), max(step, round(bh * s / step) * step)

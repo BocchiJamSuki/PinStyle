@@ -342,3 +342,11 @@ The images are probably AI-generated and of unknown provenance, so the case is d
 - Replay with the same pins, seed and settings: `20261008T133332Z_pinstyle_debug_owner_test_s0`. The seam is gone. The hair region is clipped (area 0.278). The colours stay mixed, as expected.
 
 **Not caused by the absence of training.** A trained correspondence branch (Engine B, future work) would sharpen *where* the reference informs the draft. It does not decide *which colours* a large region should take. That needs per-pin colour control, a possible next step.
+
+**Follow-up: the seam was still visible.** Owner run `20261008T133854Z_app_global_local_debug_owner_test_s0` still showed a straight cut line on the hair. A ~19 px feather across a large colour difference along a straight crop edge still reads as a seam.
+
+- **Fix:** when a region does not fit the square crop, Engine A now uses a rectangular crop that holds the whole region (`bbox_rect`). It generates at that aspect, with the long side 1024 and multiples of 64 (`work_size`). Regions that fit keep the square crop, so the D3/D3b runs stay reproducible.
+- **Replay with the owner's pins:** `20261008T135808Z_pinstyle_debug_owner_test_s0`.
+  - The hair crop is [0, 0, 832, 1024] at 832×1024, with `clipped_by_crop` false. No seam.
+  - The hair takes the reference's grey/silver sheen, and also the reference's red rose and earrings, which lie inside the reference's hair region.
+  - Region latencies (97 / 77 / 94 s) were inflated, because the app was running at the same time and sharing the 8 GB GPU.

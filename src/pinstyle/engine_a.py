@@ -24,7 +24,7 @@ import torch
 from PIL import Image
 
 from pinstyle.lineart import control_image
-from pinstyle.segmentation import bbox, dilate, feather, inside, sam_mask
+from pinstyle.segmentation import bbox, bbox_rect, dilate, feather, inside, sam_mask, work_size
 from pinstyle.types import PointPair, RegionSettings
 
 
@@ -96,23 +96,29 @@ class EngineA:
             min_side = int(c.min_crop_frac * min(out.size))
             box = bbox(tgt_mask, c.crop_margin, min_side)
             clipped = bool((tgt_mask & ~inside(tgt_mask.shape, box, 0)).any())
-            # a region larger than the (square, image-bounded) crop is cut at the crop edge;
-            # keep a feather band inside interior edges so the paste has no seam (owner's
-            # debug run, 2026-10-08: hard line across the hair)
+            if clipped:
+                # the square, image-bounded crop cannot hold this region (e.g. long hair on a
+                # portrait image): use a rectangular crop instead of cutting the region, which
+                # left a straight seam even when feathered (owner's debug runs, 2026-10-08).
+                # Regions that fit keep the square crop, so D3/D3b stay reproducible.
+                box = bbox_rect(tgt_mask, c.crop_margin, min_side)
+                clipped = bool((tgt_mask & ~inside(tgt_mask.shape, box, 0)).any())
+            # safety: anything still outside the crop is dropped with a feather band inside
+            # interior crop edges (a no-op when the crop holds the region)
             band = int(3 * c.feather_sigma) + 1
             tgt_mask = tgt_mask & inside(tgt_mask.shape, box, band)
             core_mask = core_mask & tgt_mask
-            ws = c.work_size
-            crop_out = out.crop(box).resize((ws, ws), Image.Resampling.LANCZOS)
-            crop_draft = draft.crop(box).resize((ws, ws), Image.Resampling.LANCZOS)
+            cw, ch = work_size(box, c.work_size)
+            crop_out = out.crop(box).resize((cw, ch), Image.Resampling.LANCZOS)
+            crop_draft = draft.crop(box).resize((cw, ch), Image.Resampling.LANCZOS)
             m = Image.fromarray(tgt_mask[box[1] : box[3], box[0] : box[2]].astype(np.uint8) * 255)
-            m = m.resize((ws, ws), Image.Resampling.NEAREST)
+            m = m.resize((cw, ch), Image.Resampling.NEAREST)
 
             if c.init_from_draft:
                 # only inside the undilated mask: the dilated ring would carry the draft's
                 # background colour into the result (a halo, D3 run 1)
                 core = core_mask[box[1] : box[3], box[0] : box[2]].astype(np.uint8) * 255
-                core = Image.fromarray(core).resize((ws, ws), Image.Resampling.NEAREST)
+                core = Image.fromarray(core).resize((cw, ch), Image.Resampling.NEAREST)
                 crop_out = Image.composite(crop_draft, crop_out, core)
 
             rbox = bbox(ref_mask, 0.25, 64)
@@ -129,8 +135,8 @@ class EngineA:
                 ],
                 # the attention processors resize (and expand) these masks at every layer and
                 # step; on CPU that took ~43 s per region (D3 profile), so they live on the GPU
-                height=ws // 8,
-                width=ws // 8,
+                height=ch // 8,
+                width=cw // 8,
             )
             ip_masks = [
                 ip_masks.reshape(1, ip_masks.shape[0], ip_masks.shape[2], ip_masks.shape[3]).to(
@@ -152,8 +158,8 @@ class EngineA:
                 controlnet_conditioning_scale=c.structure_strength,
                 num_inference_steps=c.steps,
                 guidance_scale=c.guidance,
-                width=ws,
-                height=ws,
+                width=cw,
+                height=ch,
                 generator=gen,
             ).images[0]
 
@@ -175,6 +181,7 @@ class EngineA:
             masks[reg.region_id] = tgt_mask
             info["regions"][reg.region_id] = {
                 "box": list(box),
+                "work_size": [cw, ch],
                 "ref_box": list(rbox),
                 "ip_scale": round(ip_region, 3),
                 "denoise": round(denoise, 3),

@@ -31,3 +31,19 @@ def test_inside_shrinks_only_interior_edges():
     assert k[25:, :].all()  # left/right/bottom are image borders: kept
     assert not k[20:25].any()  # top edge is interior: shrunk by the band
     assert not k[:20].any()
+
+
+def test_bbox_rect_holds_tall_region_and_work_size_keeps_aspect():
+    import numpy as np
+
+    from pinstyle.segmentation import bbox, bbox_rect, work_size
+
+    m = np.zeros((1024, 832), bool)
+    m[20:1000, 300:500] = True  # tall region, taller than the image is wide
+    sq = bbox(m, 0.6, 208)
+    assert sq[3] - sq[1] <= 832  # square box is capped by the short side and cuts it
+    r = bbox_rect(m, 0.6, 208)
+    ys, xs = np.nonzero(m)
+    assert r[0] <= xs.min() and r[2] > xs.max() and r[1] <= ys.min() and r[3] > ys.max()
+    cw, ch = work_size(r, 1024)
+    assert ch == 1024 and cw % 64 == 0 and cw < ch
