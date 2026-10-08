@@ -77,3 +77,16 @@ def bbox(mask: np.ndarray, margin: float, min_size: int) -> tuple[int, int, int,
     left = int(np.clip(cx - side / 2, 0, w - side))
     top = int(np.clip(cy - side / 2, 0, h - side))
     return left, top, left + side, top + side
+
+
+def inside(shape: tuple[int, int], box: tuple[int, int, int, int], band: int) -> np.ndarray:
+    """Bool mask of the box, shrunk by `band` px on edges that lie inside the image (edges on
+    the image border are kept, since nothing lies beyond them)."""
+    h, w = shape
+    x0, y0, x1, y1 = box
+    keep = np.zeros((h, w), bool)
+    keep[
+        y0 + (band if y0 > 0 else 0) : y1 - (band if y1 < h else 0),
+        x0 + (band if x0 > 0 else 0) : x1 - (band if x1 < w else 0),
+    ] = True
+    return keep

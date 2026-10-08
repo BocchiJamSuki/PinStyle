@@ -315,3 +315,30 @@ Grids: `local_runs/colour_*_s0.jpg` and `local_runs/colour_seeds12.jpg`.
   - History.
 - **Renamed:** Generate / Fix pinned details / Generate + fix, with a one-line explanation of each.
 - **Pins:** tags are pre-filled from the case's accessory.
+
+## Debug case: the owner's own test pair (2026-10-08, laptop)
+
+The images are probably AI-generated and of unknown provenance, so the case is debug only (`assets/debug/`, gitignored). It is never used in the demo or in reports, and no images are committed.
+
+**Owner's run:** `20261008T132649Z_app_global_local_debug_owner_test_s0`, img2img with defaults, 3 pins.
+
+| Pin | Area | SAM mask | Owner's verdict |
+|---|---|---|---|
+| p1, gem brooch | 0.4% of the image | 3,423 px | fine |
+| p2, hair | 27–32% | 270,048 px (reference mask: nearly the whole reference) | colours wrong |
+| p3, clothing | 27% | 229,357 px | colours wrong |
+
+**Diagnosis**
+
+1. Hair and clothing are not local details. SAM returns half the figure, so the reference crop is almost the whole reference, and the "local" pass re-renders half the picture.
+2. Draft-colour init (brown hair, white blouse) plus a reference with silver hair and black-red clothes gives mixed mauve and pink colours. This is the colour-vs-rendering question again, at region level, where there is no colour control yet.
+3. **Bug:** a hard seam across the top of the head. The hair mask was taller than the square crop (box [0, 84, 832, 916]), and the paste had no feather at the crop edge.
+
+**Fix**
+
+- The target mask is now clipped to the crop with a feather band inside interior crop edges (`segmentation.inside`).
+- Regions record `area_frac` and `clipped_by_crop`.
+- The app warns when a pin covers more than 15% of the image.
+- Replay with the same pins, seed and settings: `20261008T133332Z_pinstyle_debug_owner_test_s0`. The seam is gone. The hair region is clipped (area 0.278). The colours stay mixed, as expected.
+
+**Not caused by the absence of training.** A trained correspondence branch (Engine B, future work) would sharpen *where* the reference informs the draft. It does not decide *which colours* a large region should take. That needs per-pin colour control, a possible next step.

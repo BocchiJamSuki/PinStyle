@@ -209,7 +209,15 @@ def run(
         "output": str(run_dir / "output.png"),
     }
     versions = [*versions, v]
-    msg = (
+    big = [k for k, r in ((einfo or {}).get("regions") or {}).items() if r["area_frac"] > 0.15]
+    warn = (
+        f"⚠️ {', '.join(big)}: the pinned region covers more than 15% of the image. Pins are "
+        "meant for small details; for large areas (hair, clothes), use the colour and "
+        "rendering sliders instead. "
+        if big
+        else ""
+    )
+    msg = warn + (
         f"{MODE_LABEL[mode]} done in {rec['latency_s']:.0f} s. The result is the right side of "
         f"the slider, saved as `{run_dir.name}/output.png`."
     )

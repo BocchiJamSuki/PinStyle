@@ -24,7 +24,7 @@ import torch
 from PIL import Image
 
 from pinstyle.lineart import control_image
-from pinstyle.segmentation import bbox, dilate, feather, sam_mask
+from pinstyle.segmentation import bbox, dilate, feather, inside, sam_mask
 from pinstyle.types import PointPair, RegionSettings
 
 
@@ -95,6 +95,13 @@ class EngineA:
             # crop around the target region and upscale to the working size
             min_side = int(c.min_crop_frac * min(out.size))
             box = bbox(tgt_mask, c.crop_margin, min_side)
+            clipped = bool((tgt_mask & ~inside(tgt_mask.shape, box, 0)).any())
+            # a region larger than the (square, image-bounded) crop is cut at the crop edge;
+            # keep a feather band inside interior edges so the paste has no seam (owner's
+            # debug run, 2026-10-08: hard line across the hair)
+            band = int(3 * c.feather_sigma) + 1
+            tgt_mask = tgt_mask & inside(tgt_mask.shape, box, band)
+            core_mask = core_mask & tgt_mask
             ws = c.work_size
             crop_out = out.crop(box).resize((ws, ws), Image.Resampling.LANCZOS)
             crop_draft = draft.crop(box).resize((ws, ws), Image.Resampling.LANCZOS)
@@ -172,6 +179,8 @@ class EngineA:
                 "ip_scale": round(ip_region, 3),
                 "denoise": round(denoise, 3),
                 "mask_px": int(tgt_mask.sum()),
+                "area_frac": round(float(tgt_mask.mean()), 4),
+                "clipped_by_crop": clipped,
                 "ref_mask_px": int(ref_mask.sum()),
                 "latency_s": round(time.perf_counter() - t0, 2),
             }
