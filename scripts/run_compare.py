@@ -70,22 +70,34 @@ def main() -> None:
     for name in args.providers:
         p = PROVIDERS[name]
         planned = sum(
-            1 for c, a in jobs
-            if not _cached(p, cases[c], prompt_for(cfg, c, max(a, 1), name), a)
+            1 for c, a in jobs if not _cached(p, cases[c], prompt_for(cfg, c, max(a, 1), name), a)
         )
         log.info("budget %s", json.dumps(runner.check_budget(ledger, p, planned, runner.CAP_CNY)))
         for c, a in jobs:
             case = cases[c]
             prompt = prompt_for(cfg, c, max(a, 1), name)
             img, rec = runner.generate(
-                p, case.draft, case.reference_image(), prompt, seed=a,
+                p,
+                case.draft,
+                case.reference_image(),
+                prompt,
+                seed=a,
                 tag={"case": c, "attempt": a, "trial": args.trial},
             )
             out = runner.D5 / "outputs" / name / f"{c}_a{a}.png"
             out.parent.mkdir(parents=True, exist_ok=True)
             img.save(out)
-            log.info("%s %s a%d cached=%s size=%s model=%s usage=%s -> %s", name, c, a,
-                     rec["cached"], img.size, rec.get("response_model"), rec.get("usage"), out)
+            log.info(
+                "%s %s a%d cached=%s size=%s model=%s usage=%s -> %s",
+                name,
+                c,
+                a,
+                rec["cached"],
+                img.size,
+                rec.get("response_model"),
+                rec.get("usage"),
+                out,
+            )
         log.info("%s spent CNY %.2f of cap %.2f", name, ledger.spent(name), runner.CAP_CNY)
 
 

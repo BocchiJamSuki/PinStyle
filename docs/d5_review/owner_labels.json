@@ -1,0 +1,167 @@
+{
+ "shichimi_flat-01": {
+  "tags": [
+   "structure change"
+  ],
+  "ok": "no",
+  "note": "输出是Reference图片"
+ },
+ "shichimi_flat-02": {
+  "tags": [],
+  "ok": "yes",
+  "note": ""
+ },
+ "shichimi_flat-03": {
+  "tags": [
+   "lost detail"
+  ],
+  "ok": "no",
+  "note": "女孩的头发颜色没有根据reference来"
+ },
+ "shichimi_flat-04": {
+  "tags": [
+   "lost detail"
+  ],
+  "ok": "no",
+  "note": "女孩的头发颜色没有根据reference来"
+ },
+ "shichimi_flat-05": {
+  "tags": [
+   "misplaced detail"
+  ],
+  "ok": "no",
+  "note": "狐狸的形象发生了异变,将尾巴识别为另一只腿"
+ },
+ "shichimi_flat-06": {
+  "tags": [
+   "structure change"
+  ],
+  "ok": "no",
+  "note": "输出是Reference图片"
+ },
+ "shichimi_flat-07": {
+  "tags": [
+   "structure change"
+  ],
+  "ok": "no",
+  "note": "输出是Reference图片"
+ },
+ "shichimi_flat-08": {
+  "tags": [
+   "misplaced detail"
+  ],
+  "ok": "no",
+  "note": "狐狸的形象发生了异变,将尾巴识别为另一只腿"
+ },
+ "shichimi_flat-09": {
+  "tags": [
+   "misplaced detail"
+  ],
+  "ok": "no",
+  "note": "狐狸的形象发生了异变,将尾巴识别为另一只腿"
+ },
+ "shichimi_flat-10": {
+  "tags": [
+   "lost detail"
+  ],
+  "ok": "no",
+  "note": "女孩的头发颜色没有根据reference来"
+ },
+ "shichimi_flat-11": {
+  "tags": [],
+  "ok": "no",
+  "note": "狐狸的形象发生了异变,将尾巴识别为另一只腿"
+ },
+ "shichimi_flat-12": {
+  "tags": [],
+  "ok": "yes",
+  "note": ""
+ },
+ "pepper_bergen_flat-01": {
+  "tags": [
+   "style drift"
+  ],
+  "ok": "no",
+  "note": "几乎和草稿一样，没学会参考色彩"
+ },
+ "pepper_bergen_flat-02": {
+  "tags": [],
+  "ok": "yes",
+  "note": ""
+ },
+ "pepper_bergen_flat-03": {
+  "tags": [
+   "structure change"
+  ],
+  "ok": "no",
+  "note": "输出是Reference图片"
+ },
+ "pepper_bergen_flat-04": {
+  "tags": [],
+  "ok": "yes",
+  "note": ""
+ },
+ "pepper_bergen_flat-05": {
+  "tags": [
+   "structure change"
+  ],
+  "ok": "no",
+  "note": "输出是Reference图片"
+ },
+ "pepper_bergen_flat-06": {
+  "tags": [],
+  "ok": "yes",
+  "note": ""
+ },
+ "pepper_bergen_flat-07": {
+  "tags": [],
+  "ok": "yes",
+  "note": ""
+ },
+ "pepper_bergen_flat-08": {
+  "tags": [],
+  "ok": "yes",
+  "note": "眼睛有点奇怪"
+ },
+ "pepper_bergen_flat-09": {
+  "tags": [
+   "style drift"
+  ],
+  "ok": "no",
+  "note": "几乎和草稿一样，没学会参考色彩"
+ },
+ "pepper_bergen_flat-10": {
+  "tags": [
+   "structure change"
+  ],
+  "ok": "no",
+  "note": "输出是Reference图片"
+ },
+ "pepper_bergen_flat-11": {
+  "tags": [],
+  "ok": "yes",
+  "note": "眼睛有点奇怪"
+ },
+ "pepper_bergen_flat-12": {
+  "tags": [
+   "style drift"
+  ],
+  "ok": "no",
+  "note": "几乎和草稿一样，没学会参考色彩"
+ },
+ "sl": {
+  "tags": []
+ },
+ "tl": {
+  "tags": []
+ },
+ "query": {
+  "tags": []
+ },
+ "gtrans": {
+  "tags": []
+ },
+ "vote": {
+  "tags": []
+ }
+}

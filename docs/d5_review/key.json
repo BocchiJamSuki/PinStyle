@@ -1,0 +1,170 @@
+{
+  "shichimi_flat-01": {
+    "case": "shichimi_flat",
+    "method": "alibaba",
+    "attempt": "3",
+    "src": "D:\\Code\\PinStyle\\runs\\d5\\outputs\\alibaba\\shichimi_flat_a3.png",
+    "run": "runs/d5 alibaba shichimi_flat a3"
+  },
+  "shichimi_flat-02": {
+    "case": "shichimi_flat",
+    "method": "PinStyle",
+    "attempt": "3",
+    "src": "D:\\Code\\PinStyle\\local_runs\\d3c\\20261008T105145Z_pinstyle_shichimi_flat_s2\\pinstyle.png",
+    "run": "20261008T105145Z_pinstyle_shichimi_flat_s2"
+  },
+  "shichimi_flat-03": {
+    "case": "shichimi_flat",
+    "method": "tencent",
+    "attempt": "3",
+    "src": "D:\\Code\\PinStyle\\runs\\d5\\outputs\\tencent\\shichimi_flat_a3.png",
+    "run": "runs/d5 tencent shichimi_flat a3"
+  },
+  "shichimi_flat-04": {
+    "case": "shichimi_flat",
+    "method": "tencent",
+    "attempt": "1",
+    "src": "D:\\Code\\PinStyle\\runs\\d5\\outputs\\tencent\\shichimi_flat_a1.png",
+    "run": "runs/d5 tencent shichimi_flat a1"
+  },
+  "shichimi_flat-05": {
+    "case": "shichimi_flat",
+    "method": "PinStyle",
+    "attempt": "1",
+    "src": "D:\\Code\\PinStyle\\local_runs\\d3c\\20261008T105124Z_pinstyle_shichimi_flat_s0\\pinstyle.png",
+    "run": "20261008T105124Z_pinstyle_shichimi_flat_s0"
+  },
+  "shichimi_flat-06": {
+    "case": "shichimi_flat",
+    "method": "alibaba",
+    "attempt": "2",
+    "src": "D:\\Code\\PinStyle\\runs\\d5\\outputs\\alibaba\\shichimi_flat_a2.png",
+    "run": "runs/d5 alibaba shichimi_flat a2"
+  },
+  "shichimi_flat-07": {
+    "case": "shichimi_flat",
+    "method": "alibaba",
+    "attempt": "1",
+    "src": "D:\\Code\\PinStyle\\runs\\d5\\outputs\\alibaba\\shichimi_flat_a1.png",
+    "run": "runs/d5 alibaba shichimi_flat a1"
+  },
+  "shichimi_flat-08": {
+    "case": "shichimi_flat",
+    "method": "global-only",
+    "attempt": "2",
+    "src": "D:\\Code\\PinStyle\\local_runs\\d3c\\20261008T105134Z_pinstyle_shichimi_flat_s1\\global.png",
+    "run": "20261008T105134Z_pinstyle_shichimi_flat_s1"
+  },
+  "shichimi_flat-09": {
+    "case": "shichimi_flat",
+    "method": "PinStyle",
+    "attempt": "2",
+    "src": "D:\\Code\\PinStyle\\local_runs\\d3c\\20261008T105134Z_pinstyle_shichimi_flat_s1\\pinstyle.png",
+    "run": "20261008T105134Z_pinstyle_shichimi_flat_s1"
+  },
+  "shichimi_flat-10": {
+    "case": "shichimi_flat",
+    "method": "tencent",
+    "attempt": "2",
+    "src": "D:\\Code\\PinStyle\\runs\\d5\\outputs\\tencent\\shichimi_flat_a2.png",
+    "run": "runs/d5 tencent shichimi_flat a2"
+  },
+  "shichimi_flat-11": {
+    "case": "shichimi_flat",
+    "method": "global-only",
+    "attempt": "1",
+    "src": "D:\\Code\\PinStyle\\local_runs\\d3c\\20261008T105124Z_pinstyle_shichimi_flat_s0\\global.png",
+    "run": "20261008T105124Z_pinstyle_shichimi_flat_s0"
+  },
+  "shichimi_flat-12": {
+    "case": "shichimi_flat",
+    "method": "global-only",
+    "attempt": "3",
+    "src": "D:\\Code\\PinStyle\\local_runs\\d3c\\20261008T105145Z_pinstyle_shichimi_flat_s2\\global.png",
+    "run": "20261008T105145Z_pinstyle_shichimi_flat_s2"
+  },
+  "pepper_bergen_flat-01": {
+    "case": "pepper_bergen_flat",
+    "method": "tencent",
+    "attempt": "3",
+    "src": "D:\\Code\\PinStyle\\runs\\d5\\outputs\\tencent\\pepper_bergen_flat_a3.png",
+    "run": "runs/d5 tencent pepper_bergen_flat a3"
+  },
+  "pepper_bergen_flat-02": {
+    "case": "pepper_bergen_flat",
+    "method": "PinStyle",
+    "attempt": "3",
+    "src": "D:\\Code\\PinStyle\\local_runs\\d3\\20261008T095737Z_pinstyle_pepper_bergen_flat_s2\\pinstyle.png",
+    "run": "20261008T095737Z_pinstyle_pepper_bergen_flat_s2"
+  },
+  "pepper_bergen_flat-03": {
+    "case": "pepper_bergen_flat",
+    "method": "alibaba",
+    "attempt": "3",
+    "src": "D:\\Code\\PinStyle\\runs\\d5\\outputs\\alibaba\\pepper_bergen_flat_a3.png",
+    "run": "runs/d5 alibaba pepper_bergen_flat a3"
+  },
+  "pepper_bergen_flat-04": {
+    "case": "pepper_bergen_flat",
+    "method": "global-only",
+    "attempt": "3",
+    "src": "D:\\Code\\PinStyle\\local_runs\\d3\\20261008T095737Z_pinstyle_pepper_bergen_flat_s2\\global.png",
+    "run": "20261008T095737Z_pinstyle_pepper_bergen_flat_s2"
+  },
+  "pepper_bergen_flat-05": {
+    "case": "pepper_bergen_flat",
+    "method": "alibaba",
+    "attempt": "2",
+    "src": "D:\\Code\\PinStyle\\runs\\d5\\outputs\\alibaba\\pepper_bergen_flat_a2.png",
+    "run": "runs/d5 alibaba pepper_bergen_flat a2"
+  },
+  "pepper_bergen_flat-06": {
+    "case": "pepper_bergen_flat",
+    "method": "global-only",
+    "attempt": "2",
+    "src": "D:\\Code\\PinStyle\\local_runs\\d3\\20261008T095723Z_pinstyle_pepper_bergen_flat_s1\\global.png",
+    "run": "20261008T095723Z_pinstyle_pepper_bergen_flat_s1"
+  },
+  "pepper_bergen_flat-07": {
+    "case": "pepper_bergen_flat",
+    "method": "PinStyle",
+    "attempt": "2",
+    "src": "D:\\Code\\PinStyle\\local_runs\\d3\\20261008T095723Z_pinstyle_pepper_bergen_flat_s1\\pinstyle.png",
+    "run": "20261008T095723Z_pinstyle_pepper_bergen_flat_s1"
+  },
+  "pepper_bergen_flat-08": {
+    "case": "pepper_bergen_flat",
+    "method": "global-only",
+    "attempt": "1",
+    "src": "D:\\Code\\PinStyle\\local_runs\\d3\\20261008T095710Z_pinstyle_pepper_bergen_flat_s0\\global.png",
+    "run": "20261008T095710Z_pinstyle_pepper_bergen_flat_s0"
+  },
+  "pepper_bergen_flat-09": {
+    "case": "pepper_bergen_flat",
+    "method": "tencent",
+    "attempt": "2",
+    "src": "D:\\Code\\PinStyle\\runs\\d5\\outputs\\tencent\\pepper_bergen_flat_a2.png",
+    "run": "runs/d5 tencent pepper_bergen_flat a2"
+  },
+  "pepper_bergen_flat-10": {
+    "case": "pepper_bergen_flat",
+    "method": "alibaba",
+    "attempt": "1",
+    "src": "D:\\Code\\PinStyle\\runs\\d5\\outputs\\alibaba\\pepper_bergen_flat_a1.png",
+    "run": "runs/d5 alibaba pepper_bergen_flat a1"
+  },
+  "pepper_bergen_flat-11": {
+    "case": "pepper_bergen_flat",
+    "method": "PinStyle",
+    "attempt": "1",
+    "src": "D:\\Code\\PinStyle\\local_runs\\d3\\20261008T095710Z_pinstyle_pepper_bergen_flat_s0\\pinstyle.png",
+    "run": "20261008T095710Z_pinstyle_pepper_bergen_flat_s0"
+  },
+  "pepper_bergen_flat-12": {
+    "case": "pepper_bergen_flat",
+    "method": "tencent",
+    "attempt": "1",
+    "src": "D:\\Code\\PinStyle\\runs\\d5\\outputs\\tencent\\pepper_bergen_flat_a1.png",
+    "run": "runs/d5 tencent pepper_bergen_flat a1"
+  }
+}

@@ -6,7 +6,7 @@ Last updated: 2026-10-08
 - D0 ✅ (2026-10-08): smoke tests pass; 11.98 GiB peak; env frozen.
 - D2 ✅: global path; detail case = Pepper's red hair ribbon, misrendered or lost in 6/6 global runs.
 - D3 ✅: main case = Shichimi's horn ornament. Reference point on the horn: carved ornament 6/6; on the background: 0/6. Pepper ribbon ablation: its colour came from the draft, not the reference (EXPERIMENTS).
-- D5 ✅ (2026-10-08): owner's blind review done; report in `docs/D5_REPORT.md`. Spend: Tencent CNY 1.20, Alibaba CNY 1.40.
+- D5 ✅ (2026-10-08): owner's blind review plus a second, non-blind developer review with its own criteria (they agree on 10/24 items); report in `docs/D5_REPORT.md`. Spend: Tencent CNY 1.20, Alibaba CNY 1.40.
 - D4 🔄: Gradio app built and tested end to end (handlers); browser click-through pending.
 - Docs: verification, full plan (future work), demo scope (ADR-0006), image policy (ADR-0007), topology (ADR-0008).
 - Laptop ↔ GitHub and laptop ↔ AutoDL key-based SSH working. Server: RTX 4090 D 24 GB, driver 595.71.05, /root/autodl-tmp 150 GB (112 GB free), conda 24.4.0.

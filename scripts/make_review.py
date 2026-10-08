@@ -24,8 +24,13 @@ from omegaconf import OmegaConf
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "local_runs" / "review"
-TAXONOMY = ["lost detail", "misplaced detail", "style drift", "structure change",
-            "not controllable"]
+TAXONOMY = [
+    "lost detail",
+    "misplaced detail",
+    "style drift",
+    "structure change",
+    "not controllable",
+]
 
 
 def collect(cfg) -> list[dict]:
@@ -33,15 +38,35 @@ def collect(cfg) -> list[dict]:
     for case, spec in cfg.cases.items():
         for a, run in enumerate(spec.our_runs, start=1):
             d = ROOT / run
-            items.append({"case": case, "method": "global-only", "attempt": a,
-                          "src": d / "global.png", "run": d.name})
-            items.append({"case": case, "method": "PinStyle", "attempt": a,
-                          "src": d / "pinstyle.png", "run": d.name})
+            items.append(
+                {
+                    "case": case,
+                    "method": "global-only",
+                    "attempt": a,
+                    "src": d / "global.png",
+                    "run": d.name,
+                }
+            )
+            items.append(
+                {
+                    "case": case,
+                    "method": "PinStyle",
+                    "attempt": a,
+                    "src": d / "pinstyle.png",
+                    "run": d.name,
+                }
+            )
         for prov in cfg.providers:
             for a in range(1, cfg.attempts + 1):
-                items.append({"case": case, "method": prov, "attempt": a,
-                              "src": ROOT / f"runs/d5/outputs/{prov}/{case}_a{a}.png",
-                              "run": f"runs/d5 {prov} {case} a{a}"})
+                items.append(
+                    {
+                        "case": case,
+                        "method": prov,
+                        "attempt": a,
+                        "src": ROOT / f"runs/d5/outputs/{prov}/{case}_a{a}.png",
+                        "run": f"runs/d5 {prov} {case} a{a}",
+                    }
+                )
     return items
 
 
@@ -86,23 +111,30 @@ def build(cfg) -> None:
     print(f"{len(key)} items -> {OUT / 'index.html'} (key: runs/d5/review_key.json)")
 
 
-def reveal(labels_path: Path) -> None:
+def reveal(labels_path: Path, out_name: str = "review_revealed.csv") -> None:
     key = json.loads((ROOT / "runs/d5/review_key.json").read_text())
     labels = json.loads(labels_path.read_text(encoding="utf-8"))
     rows = []
     for iid, k in key.items():
         lab = labels.get(iid, {})
-        rows.append({"item": iid, "case": k["case"], "method": k["method"],
-                     "attempt": int(k["attempt"]), "run": k["run"],
-                     "acceptable": lab.get("ok", ""),
-                     **{t: int(t in lab.get("tags", [])) for t in TAXONOMY},
-                     "note": lab.get("note", "")})
+        rows.append(
+            {
+                "item": iid,
+                "case": k["case"],
+                "method": k["method"],
+                "attempt": int(k["attempt"]),
+                "run": k["run"],
+                "acceptable": lab.get("ok", ""),
+                **{t: int(t in lab.get("tags", [])) for t in TAXONOMY},
+                "note": lab.get("note", ""),
+            }
+        )
     rows.sort(key=lambda r: (r["case"], r["method"], r["attempt"]))
-    with (ROOT / "runs/d5/review_revealed.csv").open("w", newline="", encoding="utf-8") as f:
+    with (ROOT / "runs/d5" / out_name).open("w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0]))
         w.writeheader()
         w.writerows(rows)
-    print("written runs/d5/review_revealed.csv")
+    print(f"written runs/d5/{out_name}")
 
 
 PAGE = """<!doctype html><html><head><meta charset="utf-8"><title>PinStyle blind review</title>
@@ -127,9 +159,10 @@ a.click();}</script></body></html>"""
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--reveal", type=Path)
+    ap.add_argument("--out", default="review_revealed.csv")
     args = ap.parse_args()
     cfg = OmegaConf.load(ROOT / "configs" / "review.yaml")
-    reveal(args.reveal) if args.reveal else build(cfg)
+    reveal(args.reveal, args.out) if args.reveal else build(cfg)
 
 
 if __name__ == "__main__":

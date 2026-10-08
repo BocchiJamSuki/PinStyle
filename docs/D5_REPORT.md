@@ -28,6 +28,44 @@ Grid: `runs/d5/report/grid_pepper_bergen_flat.png`. Source images: David Revoy, 
 
 Grid: `runs/d5/report/grid_shichimi_flat.png`. Source images: David Revoy, Pepper&Carrot, CC BY 4.0.
 
+## Reviewers compared
+
+- **owner**: the project owner, blind.
+- **developer**: Claude Code (developer), NOT blind: it knew the method of every item and built PinStyle. Its own criteria: the draft decides content and design colours (hard); the reference decides rendering (hard); the reference's version of the accessory is a bonus.
+
+| Case | Method | owner | developer |
+|---|---|---|---|
+| pepper_bergen_flat | global-only | 3/3 | 0/3 |
+| pepper_bergen_flat | PinStyle | 3/3 | 0/3 |
+| pepper_bergen_flat | tencent | 0/3 | 3/3 |
+| pepper_bergen_flat | alibaba | 0/3 | 0/3 |
+| shichimi_flat | global-only | 1/3 | 0/3 |
+| shichimi_flat | PinStyle | 1/3 | 0/3 |
+| shichimi_flat | tencent | 0/3 | 3/3 |
+| shichimi_flat | alibaba | 0/3 | 0/3 |
+
+Item-level agreement, owner vs developer: 10/24.
+
+developer notes:
+
+- pepper_bergen_flat / PinStyle: [开发者自己的标准：草稿决定内容和固有色（硬性）；参考图决定画法（硬性）；饰品像参考图那样渲染（加分项）] 红发带是红色且在原位（好）；但背景被换成深蓝底，猫的颜色被改
+- pepper_bergen_flat / PinStyle: [开发者自己的标准：草稿决定内容和固有色（硬性）；参考图决定画法（硬性）；饰品像参考图那样渲染（加分项）] 红发带是红色（好）；但背景被换，猫的颜色被改
+- pepper_bergen_flat / PinStyle: [开发者自己的标准：草稿决定内容和固有色（硬性）；参考图决定画法（硬性）；饰品像参考图那样渲染（加分项）] 背景被换，猫的颜色被改；发带只部分恢复，偏粉色
+- pepper_bergen_flat / alibaba: [开发者自己的标准：草稿决定内容和固有色（硬性）；参考图决定画法（硬性）；饰品像参考图那样渲染（加分项）] 画的是参考图的人物，草稿被忽略
+- pepper_bergen_flat / global-only: [开发者自己的标准：草稿决定内容和固有色（硬性）；参考图决定画法（硬性）；饰品像参考图那样渲染（加分项）] 卑尔根小镇和天空背景被换成了参考图的深蓝底；猫从黄色变成了虎斑；红发带成了紫色的结
+- pepper_bergen_flat / global-only: [开发者自己的标准：草稿决定内容和固有色（硬性）；参考图决定画法（硬性）；饰品像参考图那样渲染（加分项）] 卑尔根小镇和天空背景被换成了参考图的深蓝底；猫从黄色变成了虎斑；红发带成了黑色的结
+- pepper_bergen_flat / global-only: [开发者自己的标准：草稿决定内容和固有色（硬性）；参考图决定画法（硬性）；饰品像参考图那样渲染（加分项）] 卑尔根小镇和天空背景被换成了参考图的深蓝底；猫从黄色变成了虎斑；红发带画成了金色饰物
+- pepper_bergen_flat / tencent: [开发者自己的标准：草稿决定内容和固有色（硬性）；参考图决定画法（硬性）；饰品像参考图那样渲染（加分项）] 人物、猫、树桩、卑尔根小镇背景和红发带都在，猫保持黄色；画法是油画式笔触，与参考图接近。不足：没有用参考图那种偏暗的光线
+- shichimi_flat / PinStyle: [开发者自己的标准：草稿决定内容和固有色（硬性）；参考图决定画法（硬性）；饰品像参考图那样渲染（加分项）] 弯角是刻花象牙（加分）；但发色和肤色被改，纸鹤和云纹丢了
+- shichimi_flat / PinStyle: [开发者自己的标准：草稿决定内容和固有色（硬性）；参考图决定画法（硬性）；饰品像参考图那样渲染（加分项）] 弯角是刻花象牙（加分）；但发色被改，纸鹤和云纹丢了，狐狸身上覆盖着红布
+- shichimi_flat / PinStyle: [开发者自己的标准：草稿决定内容和固有色（硬性）；参考图决定画法（硬性）；饰品像参考图那样渲染（加分项）] 弯角是刻花象牙（加分）；但发色被改，纸鹤飘到右边，云纹丢了
+- shichimi_flat / alibaba: [开发者自己的标准：草稿决定内容和固有色（硬性）；参考图决定画法（硬性）；饰品像参考图那样渲染（加分项）] 画的是参考图的两个人物，草稿被忽略
+- shichimi_flat / global-only: [开发者自己的标准：草稿决定内容和固有色（硬性）；参考图决定画法（硬性）；饰品像参考图那样渲染（加分项）] 发色从白色变成金色（固有色被改）；纸鹤和云纹丢了；弯角画成了暗红色；狐狸身上覆盖着红布
+- shichimi_flat / global-only: [开发者自己的标准：草稿决定内容和固有色（硬性）；参考图决定画法（硬性）；饰品像参考图那样渲染（加分项）] 发色被改，肤色也变了；纸鹤和云纹丢了；弯角成了灰色条纹框
+- shichimi_flat / global-only: [开发者自己的标准：草稿决定内容和固有色（硬性）；参考图决定画法（硬性）；饰品像参考图那样渲染（加分项）] 发色被改；弯角没了；纸鹤飘到右边；云纹丢了
+- shichimi_flat / tencent: [开发者自己的标准：草稿决定内容和固有色（硬性）；参考图决定画法（硬性）；饰品像参考图那样渲染（加分项）] 构图、人物、狐狸、纸鹤、云纹都在；白发保留；画法是干净线条加柔和上色，接近参考图。不足：弯角是素白的，不是参考图那种刻花象牙
+- shichimi_flat / tencent: [开发者自己的标准：草稿决定内容和固有色（硬性）；参考图决定画法（硬性）；饰品像参考图那样渲染（加分项）] 构图、人物、狐狸、纸鹤、云纹都在；白发保留；画法是干净线条加柔和上色，接近参考图。不足：弯角是素白的，多了金色环扣，不是参考图那种刻花象牙
+
 ## Interpretation (developer; facts above, reading below)
 
 1. **Owner's blind verdict:** our two methods are tied, and both are ahead of the two services on these 2 cases.
@@ -46,3 +84,22 @@ Grid: `runs/d5/report/grid_shichimi_flat.png`. Source images: David Revoy, Peppe
    - 2 cases, 1 reviewer (the owner), simulated drafts derived from the finished works;
    - our "attempts" are seeds, not refinements;
    - Midjourney is not included.
+
+## Second reviewer (added 2026-10-08, at the owner's request)
+
+- The owner asked for a second review, with the developer applying **its own criteria** rather than the owner's. The developer review is **not blind**: Claude Code built the set and PinStyle, and knew every item's method.
+- **Developer criteria:**
+  - the draft decides content and design colours, such as hair colour, the cat's fur and the background (hard);
+  - the reference decides the rendering: shading, brushwork and line quality (hard);
+  - rendering the accessory like the reference's version of it is a bonus, not required.
+- **Results** (table above):
+  - Tencent 6/6 acceptable: it keeps every drawn element and the design colours.
+  - Our methods 0/12: the global pass replaces the Pepper background, recolours the cat, and changes Shichimi's hair. It also drops the paper crane and the clouds.
+  - Alibaba 0/6.
+- **Agreement with the owner:** 10/24 items, all on rejections (Alibaba 6, plus 4 of ours on Shichimi).
+- **What the disagreement shows:**
+  - The verdict depends on what "finish my draft in my reference's style" means: adopt the reference's colours (owner), or keep the draft's colours and adopt only the rendering (developer).
+  - Under the second reading, our global path is the weak point. It transfers too much of the reference (colours and background) and loses draft content.
+  - Under the first reading, Tencent is too draft-faithful.
+  - The method should make this choice explicit and controllable, for example with separate colour and rendering strengths, or with colour locks per region.
+- Labels are stored in `docs/d5_review/`: `owner_labels.json`, `developer_labels.json` and `key.json`.
