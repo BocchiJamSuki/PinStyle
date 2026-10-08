@@ -21,6 +21,7 @@ import fnmatch
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import tempfile
@@ -34,7 +35,7 @@ ROOT = Path(__file__).resolve().parents[1]
 HF_ENDPOINT = os.environ.get("HF_ENDPOINT", "https://hf-mirror.com").rstrip("/")
 MS_ENDPOINT = "https://www.modelscope.cn"
 ARIA = [
-    "aria2c",
+    shutil.which("aria2c") or str(ROOT / "third_party/tools/aria2c.exe"),
     "-q",
     "-c",
     "--file-allocation=none",
@@ -95,27 +96,42 @@ def hf_files(repo: str, revision: str, allow: list[str]) -> dict[str, dict]:
 
 
 def source_urls(spec, revision: str, name: str) -> dict[str, str]:
-    urls = {"hf-mirror": f"{HF_ENDPOINT}/{spec.repo}/resolve/{revision}/{name}"}
+    urls = {
+        "hf-mirror": f"https://hf-mirror.com/{spec.repo}/resolve/{revision}/{name}",
+        "hf": f"https://huggingface.co/{spec.repo}/resolve/{revision}/{name}",
+    }
     if spec.get("modelscope"):
         urls["modelscope"] = f"{MS_ENDPOINT}/models/{spec.modelscope}/resolve/master/{name}"
     return urls
 
 
+UNITS = {"B": 1 / 2**20, "KiB": 1 / 1024, "MiB": 1.0, "GiB": 1024.0}
+
+
 def probe(url: str, seconds: int) -> float:
-    """MB/s over a short download probe (0 on failure). Counts allocated blocks: aria2c writes
-    segments at offsets, so st_size of the sparse file overstates progress."""
+    """MB/s over a short download probe (0 on failure). On POSIX it counts allocated blocks
+    (aria2c writes segments at offsets, so st_size of the sparse file overstates progress).
+    Windows has no st_blocks, so there it uses the median of aria2c's own "DL:" readings."""
     tmp = Path(tempfile.mkdtemp(prefix="probe_"))
+    cmd = [a for a in ARIA if a != "-q"] + ["--summary-interval=1", "--console-log-level=warn"]
     t0 = time.monotonic()
+    out = ""
     try:
-        subprocess.run(
-            [*ARIA, "-d", str(tmp), "-o", "f", url], timeout=seconds, capture_output=True
+        r = subprocess.run(
+            [*cmd, "-d", str(tmp), "-o", "f", url], timeout=seconds, capture_output=True
         )
-    except subprocess.TimeoutExpired:
-        pass
+        out = r.stdout.decode(errors="ignore")
+    except subprocess.TimeoutExpired as e:
+        out = (e.stdout or b"").decode(errors="ignore")
     dt = time.monotonic() - t0
-    got = sum(p.stat().st_blocks * 512 for p in tmp.rglob("*") if p.is_file())
+    if hasattr(os.stat_result, "st_blocks"):
+        got = sum(p.stat().st_blocks * 512 for p in tmp.rglob("*") if p.is_file())
+        rate = got / dt / 2**20
+    else:
+        vals = [float(v) * UNITS[u] for v, u in re.findall(r"DL:([\d.]+)(GiB|MiB|KiB|B)", out)]
+        rate = sorted(vals)[len(vals) // 2] if vals else 0.0
     shutil.rmtree(tmp, ignore_errors=True)
-    return got / dt / 2**20
+    return rate
 
 
 def download(url: str, dest: Path) -> None:

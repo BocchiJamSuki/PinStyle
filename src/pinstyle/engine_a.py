@@ -130,7 +130,7 @@ class EngineA:
                     "cuda", torch.float16
                 )
             ]
-            pipe = self.stack.inpaint
+            pipe = self.stack.use("inpaint")
             pipe.set_ip_adapter_scale([[ip_region, c.global_ip_scale]])
             gen = torch.Generator("cuda").manual_seed(seed)
             res = pipe(

@@ -65,13 +65,15 @@ def run_global(
     )
     t0 = time.perf_counter()
     if s.mode == "txt2img":
-        stack.txt2img.set_ip_adapter_scale(ip_scale(s))
-        out = stack.txt2img(image=ctrl, width=size[0], height=size[1], **common).images[0]
+        pipe = stack.use("txt2img")
+        pipe.set_ip_adapter_scale(ip_scale(s))
+        out = pipe(image=ctrl, width=size[0], height=size[1], **common).images[0]
     elif s.mode == "img2img":
-        stack.img2img.set_ip_adapter_scale(ip_scale(s))
-        out = stack.img2img(
-            image=draft_r, control_image=ctrl, strength=s.img2img_strength, **common
-        ).images[0]
+        pipe = stack.use("img2img")
+        pipe.set_ip_adapter_scale(ip_scale(s))
+        out = pipe(image=draft_r, control_image=ctrl, strength=s.img2img_strength, **common).images[
+            0
+        ]
     else:
         raise ValueError(s.mode)
     torch.cuda.synchronize()
