@@ -88,3 +88,37 @@ The first attempt ran out of memory at 1024 px: `from_pipe` cast the shared modu
 - Unit tests: `tests/test_pairs.py` (10 tests on the pair-state logic). Full suite: 23 passed with sockets blocked.
 - End-to-end handler test on the server, in the app's process with simulated clicks at the D3 coordinates: load case → pair p1 (tag "red hair ribbon") → global only (7.67 s, `20261008T100211Z_app_global_pepper_bergen_flat_s0`) → PinStyle on the current output (7.66 s, `20261008T100218Z_app_local_on_current_pepper_bergen_flat_s0`) → global + PinStyle (12.45 s, `20261008T100231Z_app_global_local_pepper_bergen_flat_s0`) → mark acceptable → compare two versions. All steps passed.
 - **Not yet done:** a manual click-through in a real browser, with screenshots. It needs the owner's SSH tunnel and is folded into the D6 dry run.
+
+## D3 ablation — where does the ribbon's red come from? (2026-10-08)
+
+The owner pointed out that the reference vest and the draft ribbon are both red, so the D3 case cannot show what the reference contributes. Ablation on `pepper_bergen_flat`, seeds 0–2, 1 pair, strength 0.6, everything else as in D3:
+
+| Condition | Run IDs | Ribbon red? (visual, developer) |
+|---|---|---|
+| A: reference point on the red vest, with draft init (the D3 setting) | `20261008T095710Z`/`095723Z`/`095737Z` | s0 and s2 red, s1 partly |
+| B: reference point on dark hair, with draft init | `20261008T101607Z`/`101620Z`/`101634Z` | no: brown or dark purple |
+| C: reference point on the blue background, with draft init | `20261008T101713Z`/`101727Z`/`101741Z` | s0 and s2 red, s1 partly |
+| D: reference point on the red vest, no draft init | `20261008T101818Z`/`101831Z`/`101845Z` | no: dark or greenish |
+| E: reference point on the blue background, no draft init | `20261008T101922Z`/`101936Z`/`101949Z` | no |
+
+Grid: `local_runs/d3abl/grid.jpg`.
+
+A crude automatic score, `local_runs/d3abl/red_fraction.json`: the share of the draft's red ribbon pixels that are red in the output (R > G + 50 and R > B + 50).
+
+| Condition | s0 | s1 | s2 |
+|---|---|---|---|
+| global-only | 0.000 | 0.000 | 0.003 |
+| A | 0.017 | 0.000 | 0.131 |
+| B | 0.000 | 0.000 | 0.004 |
+| C | 0.124 | 0.000 | 0.112 |
+| D | 0.000 | 0.000 | 0.005 |
+| E | 0.000 | 0.000 | 0.001 |
+
+The score under-counts, because the re-rendered ribbon does not sit exactly on the draft's pixels (A s0 looks red but scores 0.017), so it is only indicative.
+
+**Conclusion:**
+
+- The red comes from the **draft init** (with the region tag). The reference region does **not** carry the colour: C, with a blue reference region, is as red as A.
+- A dark reference region (B) suppresses it.
+- So D3 shows *detail protection* (keeping what the artist drew in a region that global transfer loses). It does **not** show *regional style transfer from a chosen reference region*.
+- That needs a case where the same accessory appears in both the reference and the draft (next step).

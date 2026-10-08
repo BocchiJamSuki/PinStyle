@@ -28,3 +28,14 @@ The demo and the service comparison need illustrations with clear rights. For no
 - **External services.** The licenses allow sending CC0 and CC BY works to OpenAI, Gemini and Midjourney, and we keep CC BY attribution in our records and outputs. For Midjourney, prefer Stealth mode: posting a CC BY work publicly without attribution would conflict with the license.
 - **Sourcing time.** Finding several works of the same character that include a small accessory may take time (D1). The fallback is same-artist, different-character pairs, documented as such.
 - **A stand-in scenario.** These works stand in for the brief's "artist's own registered work" scenario, and the demo narrative says so.
+
+## Update 2026-10-08 — approval delegated
+
+The owner delegated image approval to Claude Code: new CC0 / CC BY images may be used without asking, after Claude Code has checked them. The checks are the same as before:
+
+- the license is verified at the source;
+- the work is by the actual author (no reposts);
+- it is listed in `MANIFEST.csv`;
+- no NC or ND licenses.
+
+Each approval is recorded in the manifest and in EXPERIMENTS.
