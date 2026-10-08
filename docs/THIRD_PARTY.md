@@ -302,19 +302,21 @@ Rules, enforced by `pinstyle.external` (ADR-0004):
 
 ### 9.1 Per component
 
+D0 measured (`20261008T092942Z_smoke_models`, 2026-10-08): all demo models resident 11.97 GiB; peak during a 512², 4-step ControlNet + IP-Adapter generation 11.57 GiB; peak overall 11.98 GiB. GiB = `torch.cuda.memory_allocated`.
+
 | Component | Basis | Est. (GB) | Measured (M0) |
 |---|---|---|---|
-| SDXL UNet | 2.6B params × 2 B | 5.1 | — |
-| SDXL text encoders | 0.82B params × 2 B | 1.6 | — |
-| SDXL VAE (fp16 fix) | 84M params × 2 B | 0.2 | — |
+| SDXL UNet | 2.6B params × 2 B | 5.1 | 5.57 GiB (D0, `20261008T092942Z_smoke_models`) |
+| SDXL text encoders | 0.82B params × 2 B | 1.6 | 1.52 GiB (D0, `20261008T092942Z_smoke_models`) |
+| SDXL VAE (fp16 fix) | 84M params × 2 B | 0.2 | 0.16 GiB (D0, `20261008T092942Z_smoke_models`) |
 | CSGO adapters (`csgo_4_32.bin`) | 3.98 GB file, dtype unknown | 2.0–4.0 | — |
 | Tile ControlNet | fp16 file | 2.5 | — |
 | ViT-bigG/14 image encoder | fp16 file | 3.7 | — |
-| ViT-H/14 image encoder | fp32 file ÷ 2 | 1.3 | — |
+| ViT-H/14 image encoder | fp32 file ÷ 2 | 1.3 | 1.18 (incl. IP-Adapter Plus) GiB (D0, `20261008T092942Z_smoke_models`) |
 | IP-Adapter Plus SDXL | file size | 0.85 | — |
-| Structure ControlNet | fp16 file | 2.5 | — |
-| SAM 2.1 hiera-large | 224M params × 2 B | 0.45 | — |
-| DINOv2 ViT-L/14 with registers | 304M params × 2 B | 0.6 | — |
+| Structure ControlNet | fp16 file | 2.5 | 2.33 (MistoLine) GiB (D0, `20261008T092942Z_smoke_models`) |
+| SAM 2.1 hiera-large | 224M params × 2 B | 0.45 | 0.41 GiB (D0, `20261008T092942Z_smoke_models`) |
+| DINOv2 ViT-L/14 with registers | 304M params × 2 B | 0.6 | 0.57 GiB (D0, `20261008T092942Z_smoke_models`) |
 | CSD ViT-L | fp32 file ÷ 2 | ≤ 1.2 | — |
 | DISK + LightGlue | small | < 0.1 | — |
 | Engine B branch | design target | ≤ 0.5 | — |

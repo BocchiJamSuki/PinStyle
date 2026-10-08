@@ -1,5 +1,5 @@
 # Conda env for PinStyle (demo scope): Python 3.11 + pinned pip packages.
-# Exact transitive pins are frozen into requirements.lock.txt after D0.
+# Exact transitive pins: requirements.lock.txt (pip freeze of the server env, D0, 2026-10-08).
 # On the AutoDL server use scripts/remote/setup_env.sh (mirrors + academic acceleration).
 name: pinstyle
 channels:

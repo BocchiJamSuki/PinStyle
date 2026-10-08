@@ -64,7 +64,7 @@ See [ADR-0008](decisions/0008-execution-topology.md).
 | # | Milestone | Status | Eng. days (est.) | GPU-h (est.) | Needs from the owner |
 |---|---|---|---|---|---|
 | H | Docs updated for the demo scope; repo initialized | ✅ 2026-10-05 (laptop) | – | – | git remote URL, to push |
-| D0 | Environment + CUDA smoke test | 🔄 env install on the server | 0.5–1 | < 1 | the persistent path on the box |
+| D0 | Environment + CUDA smoke test | ✅ 2026-10-08: smoke_cuda and smoke_models pass (`20261008T092942Z_smoke_models`; 11.98 GiB peak); models verified (ADR-0009); env frozen in `requirements.lock.txt` | 0.5–1 | < 1 | the persistent path on the box |
 | D1 | CC image shortlist (approval gate) | ✅ 2026-10-06: 8 Pepper&Carrot works by David Revoy (CC BY 4.0), 3 characters, approved under delegation. Source files have no line-art layers (only paint layers; checked ep35 pages and the 2019 Shichimi artwork), so all drafts are `simulated` | 0.5–1 | 0 | approve the shortlist |
 | D2 | Global path | ⬜ | 1–1.5 | 1–2 | – |
 | D3 | Engine A + detail case end to end (CLI) | ⬜ | 2–3 | 2–4 | – |
@@ -88,7 +88,7 @@ Legend: ⬜ not started · 🔄 in progress · ✅ done · ⛔ blocked.
 
 **Tasks**
 
-- [ ] **D0.1 Machine check and CUDA smoke test.**
+- [x] **D0.1 Machine check and CUDA smoke test.**
   - Inspect `nvidia-smi` (RTX 4090, driver, CUDA), find out which path is persistent and how much space is free, and check whether conda is present.
   - If conda is missing, install Miniforge on the persistent disk, after asking the owner.
   - Write `environment.yml`: `python=3.11` plus exact pip pins, starting from these versions (latest on 2026-10-05):
@@ -107,22 +107,22 @@ Legend: ⬜ not started · 🔄 in progress · ✅ done · ⛔ blocked.
     - a ~20 GiB allocation and a small timing test.
 
     It writes a JSON report under `runs/` and exits non-zero on failure.
-- [ ] **D0.2 Repo scaffold:**
+- [x] **D0.2 Repo scaffold:**
   - `pyproject.toml` (src layout, editable install), ruff, and pytest with sockets blocked;
   - a `pinstyle` package skeleton (`config`, `types`, `runs`) and `configs/demo.yaml`;
   - `HF_HOME`, `models/` and `runs/` placed on the persistent disk.
-- [ ] **D0.3 `scripts/download_models.py`.** Pins Hugging Face revisions, records sha256, and writes `models/MANIFEST.json`. About 15–20 GB in total:
+- [x] **D0.3 `scripts/download_models.py`.** Pins Hugging Face revisions, records sha256, and writes `models/MANIFEST.json`. About 15–20 GB in total:
   - SDXL base (fp16 variant) and the fp16-fix VAE;
   - the MistoLine ControlNet (canny as fallback);
   - IP-Adapter Plus SDXL ViT-H with the ViT-H image encoder;
   - SAM 2.1-L in transformers format;
   - optionally, DINOv2-L with registers.
-- [ ] **D0.4 `scripts/smoke_models.py`:**
+- [x] **D0.4 `scripts/smoke_models.py`:**
   - load everything;
   - run one 512² ControlNet + IP-Adapter generation (4 steps) and one SAM 2 mask;
   - measure VRAM per component and at peak, into a run record;
   - fill the *Measured* column in THIRD_PARTY.md.
-- [ ] **D0.5 Freeze and wrap up:**
+- [x] **D0.5 Freeze and wrap up:**
   - re-export the working env so that `environment.yml` pins *every* package, transitive ones included;
   - start `docs/EXPERIMENTS.md` and update the status;
   - commit and push.

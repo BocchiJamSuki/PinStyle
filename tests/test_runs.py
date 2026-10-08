@@ -2,6 +2,7 @@ import json
 import socket
 
 import pytest
+from pytest_socket import SocketBlockedError
 
 from pinstyle.runs import new_run_dir, write_record
 
@@ -16,5 +17,5 @@ def test_run_record_roundtrip(tmp_path):
 
 
 def test_sockets_are_blocked():
-    with pytest.raises(Exception):
+    with pytest.raises(SocketBlockedError):
         socket.create_connection(("example.com", 80), timeout=2)
