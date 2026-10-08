@@ -1,0 +1,17 @@
+# D5 comparison with external services (ADR-0009). Same prompt template for every service.
+# Attempt 1 uses the template; from attempt 2 the prompt may name the accessory and where it
+# is (fairness rule, PLAN D5). One output image per call; at most 3 attempts per case.
+template: >-
+  Image A is my unfinished draft; Image B is one of my own finished illustrations.
+  Finish Image A in the style of Image B: colouring, shading and rendering.
+  Keep Image A's composition, characters, pose and every detail exactly.
+accessory_hint: >-
+  Keep the {accessory} {where}, and render it like the same ornament in Image B.
+attempts: 3
+cases:
+  shichimi_flat:
+    accessory: white horn hair ornament
+    where: beside her head
+  pepper_bergen_flat:
+    accessory: red hair ribbon
+    where: at the back of her head
