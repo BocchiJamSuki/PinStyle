@@ -1,0 +1,28 @@
+{
+  "note": "D3b. Target: the white horn ornament right of Shichimi's head in the draft. Reference point on Shichimi's carved ivory horn ornament (2025).",
+  "pairs": [
+    {
+      "id": "p1",
+      "ref_xy": [
+        0.725,
+        0.495
+      ],
+      "tgt_xy": [
+        0.575,
+        0.2
+      ]
+    }
+  ],
+  "regions": [
+    {
+      "region_id": "ornament",
+      "pair_ids": [
+        "p1"
+      ],
+      "strength": 0.6,
+      "tags": [
+        "white horn hair ornament"
+      ]
+    }
+  ]
+}

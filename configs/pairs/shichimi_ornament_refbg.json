@@ -1,0 +1,28 @@
+{
+  "note": "D3b. Target: the white horn ornament right of Shichimi's head in the draft. Ablation: reference point on the plain paper background.",
+  "pairs": [
+    {
+      "id": "p1",
+      "ref_xy": [
+        0.88,
+        0.2
+      ],
+      "tgt_xy": [
+        0.575,
+        0.2
+      ]
+    }
+  ],
+  "regions": [
+    {
+      "region_id": "ornament",
+      "pair_ids": [
+        "p1"
+      ],
+      "strength": 0.6,
+      "tags": [
+        "white horn hair ornament"
+      ]
+    }
+  ]
+}

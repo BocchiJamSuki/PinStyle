@@ -32,6 +32,15 @@ cases:
     draft_mode: lines
     prompt: "a finished digital painting of a girl with white hair in a red kimono with a fox, white hair ornament, high quality illustration"
     accessories: [white hair ornament]
+  shichimi_flat:
+    # D3b: the same accessory (Shichimi's white horn hair ornament) is in both the draft and
+    # the reference; in the 2025 reference it is carved ivory with engraved swirls.
+    source: pc_shichimi_concept_2015
+    reference: pc_shichimi_torreya_2025
+    draft_source: simulated
+    draft_mode: flat
+    prompt: "a finished digital painting of a girl with white hair in a red kimono with a fox, white horn hair ornament, high quality illustration"
+    accessories: [white horn hair ornament]
   coriander:
     source: pc_coriander_concept_2015
     reference: pc_coriander_queen_2019
