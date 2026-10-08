@@ -67,7 +67,7 @@ See [ADR-0008](decisions/0008-execution-topology.md).
 | D0 | Environment + CUDA smoke test | ✅ 2026-10-08: smoke_cuda and smoke_models pass (`20261008T092942Z_smoke_models`; 11.98 GiB peak); models verified (ADR-0009); env frozen in `requirements.lock.txt` | 0.5–1 | < 1 | the persistent path on the box |
 | D1 | CC image shortlist (approval gate) | ✅ 2026-10-06: 8 Pepper&Carrot works by David Revoy (CC BY 4.0), 3 characters, approved under delegation. Source files have no line-art layers (only paint layers; checked ep35 pages and the 2019 Shichimi artwork), so all drafts are `simulated` | 0.5–1 | 0 | approve the shortlist |
 | D2 | Global path | ✅ 2026-10-08: txt2img + MistoLine + IP-Adapter (InstantStyle), 4–7 s at 1024 px. Detail case: Pepper's red hair ribbon, misrendered or lost in 6/6 runs (EXPERIMENTS D2). Coriander line art too sparse (follow-up) | 1–1.5 | 1–2 | – |
-| D3 | Engine A + detail case end to end (CLI) | ⬜ | 2–3 | 2–4 | – |
+| D3 | Engine A + detail case end to end (CLI) | ✅ 2026-10-08: 1 point pair restores Pepper's red ribbon in 2/3 seeds (partial in 1/3); outside MAD ≤ 0.004, SSIM 0.9999; 5–7 s per region at 1024 px (EXPERIMENTS D3) | 2–3 | 2–4 | – |
 | D4 | Gradio app + concept screens | ⬜ | 1.5–2.5 | ~1 | UI feedback |
 | D5 | Comparison runner + report | ⬜ | 2–3 | 1–2 | Keys in `.env` (done 2026-10-07); budget CNY 5 per provider, spend ≤ 80%; reviews (~1–2 h) |
 | D6 | README + 2-minute demo script | ⬜ | 0.5–1 | < 1 | a dry run |
@@ -179,19 +179,19 @@ Legend: ⬜ not started · 🔄 in progress · ✅ done · ⛔ blocked.
 
 **Tasks**
 
-- [ ] **Masks:** SAM 2.1 via transformers (`Sam2Model`; several points and negative points per region; image embeddings reused).
+- [x] **Masks:** SAM 2.1 via transformers (`Sam2Model`; several points and negative points per region; image embeddings reused).
   - The target mask comes from the **draft**, where the accessory is still drawn (optionally from the output).
   - The reference mask comes from the reference.
   - Masks are dilated and feathered.
-- [ ] **Engine A**, implementing the `LocalEngine` interface (ARCHITECTURE §5.1). For each region:
+- [x] **Engine A**, implementing the `LocalEngine` interface (ARCHITECTURE §5.1). For each region:
   1. crop the region and upscale it to ~1 MP;
   2. run `StableDiffusionXLControlNetInpaintPipeline` (modules shared via `from_pipe`) with `ip_adapter_masks`: the reference's region crop on the region mask, and the global reference on the complement;
   3. add the line-art ControlNet;
   4. paste the result back with a feathered pixel-space blend, keeping one layer per region.
 
   Region strength sets the IP scale and the denoising strength.
-- [ ] Orchestrator (global → local → run record) and CLI `pinstyle run --case <id> --pairs pairs.json`.
-- [ ] Figure: draft | reference | global-only | PinStyle | zoomed crops.
+- [x] Orchestrator (global → local → run record) and CLI `pinstyle run --case <id> --pairs pairs.json`.
+- [x] Figure: draft | reference | global-only | PinStyle | zoomed crops.
 
 **Done when:**
 

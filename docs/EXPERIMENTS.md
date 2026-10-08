@@ -46,3 +46,39 @@ The first attempt ran out of memory at 1024 px: `from_pipe` cast the shared modu
 
 - `coriander`: the simulated line art is almost empty (the source is a light, soft painting), so the structure is not kept. That case is unusable until the line extraction is tuned (follow-up item).
 - `shichimi`: the white hair ornament is drawn differently in every seed, and the hair colour drifts (blonde or brown instead of white). This is a possible second case, but it is confounded by the drift.
+
+## D3 — Engine A on the detail case (2026-10-08)
+
+**Setup**
+
+- Case `pepper_bergen_flat`. The draft is line art over mean-shift flat colours, so the red ribbon is in the draft, as the necklace is in the brief's case.
+- k-means flats (k = 8–32) merged the ribbon into the hair colour, so drafts now use mean-shift flats (`lineart.py`).
+- Reference: `pc_pepper_portrait_2017`. **None of the Pepper references contain a red ribbon**, so the single point pair maps the ribbon to the reference's red vest fabric, as the rendering style for red cloth (`configs/pairs/pepper_ribbon.json`).
+- Region tag: "red hair ribbon". Strength 0.6, giving IP scale 0.76 and denoise 0.72.
+- `init_from_draft`: the region is first filled with the draft's own colours, only inside the undilated SAM mask.
+
+**Results:** commit after `D3: keep IP-Adapter region masks on the GPU`; seeds 0–2; 1 point pair.
+
+| Run ID | Global-only ribbon | PinStyle ribbon | Local latency (s) | MAD outside the region | SSIM outside the region |
+|---|---|---|---|---|---|
+| `20261008T095710Z_pinstyle_pepper_bergen_flat_s0` | gold ornament (misrendered) | red ribbon restored | 7.01 | 0.003 | 0.9999 |
+| `20261008T095723Z_pinstyle_pepper_bergen_flat_s1` | purple bow (misrendered) | partly restored: reddish pink, with purple left over | 5.11 | 0.004 | 0.9999 |
+| `20261008T095737Z_pinstyle_pepper_bergen_flat_s2` | black bow (misrendered) | red ribbon restored | 5.28 | 0.004 | 0.9999 |
+
+- The global-only result in each run is that run's `global.png` (same seed and settings as D2), so the ribbon failure reproduces 3/3 on the flat draft too.
+- Judgements are visual, by the developer.
+- MAD is the mean absolute difference on a 0–255 scale.
+- Local latency includes SAM 2 on the draft and the reference, plus one 1024² ControlNet-inpaint pass with 30 steps.
+
+**Fixes found on the way** (the earlier runs are kept on the server):
+
+- Run 1 (`20261008T094438Z…`–`094717Z…`): a pale halo of the draft's sky colour around the ribbon, because the draft colours were pasted into the dilated mask.
+- Runs 1–2: about 70 s per region, of which about 43 s was IP-Adapter mask resizing on the CPU at every attention call. Keeping the masks on the GPU brought it to 5–7 s.
+
+**Figure:** `local_runs/d3/figure_d3_s0.png`, rebuilt with `python scripts/make_figure_d3.py <run dir> <out>`.
+
+**Limits, stated plainly:**
+
+- The draft is simulated, and its flats come from the finished work.
+- The ribbon's appearance comes from the draft plus a region tag. The reference supplies only rendering style, because no reference contains the ribbon.
+- 1 of 3 seeds is only a partial fix.
