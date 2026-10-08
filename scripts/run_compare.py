@@ -39,18 +39,14 @@ def load_env() -> None:
 
 
 def prompt_for(cfg, case_id: str, attempt: int, provider: str) -> str:
+    """The shared template, with images numbered in the order the provider receives them
+    (Alibaba: reference first, then draft)."""
     p = cfg.template
-    if provider == "alibaba":  # Alibaba receives B first, then A
-        p = p.replace("Image A", "the second image").replace("Image B", "the first image")
-    else:
-        p = p.replace("Image A", "the first image").replace("Image B", "the second image")
     if attempt >= 2:
         c = cfg.cases[case_id]
-        hint = cfg.accessory_hint.format(accessory=c.accessory, where=c.where)
-        hint = hint.replace("Image B", "the first image" if provider == "alibaba" else
-                            "the second image")
-        p = f"{p} {hint}"
-    return p
+        p = f"{p} {cfg.accessory_hint.format(accessory=c.accessory, where=c.where)}"
+    a, b = ("Image 2", "Image 1") if provider == "alibaba" else ("Image 1", "Image 2")
+    return p.replace("Image A", a).replace("Image B", b)
 
 
 def main() -> None:

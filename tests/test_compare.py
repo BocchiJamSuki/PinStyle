@@ -27,7 +27,7 @@ def fake_send(counter):
 
 
 def test_mask_and_scrub_hide_keys():
-    k = "sk-ABCDEFGHIJKLMNOPQRSTUVWXYZ123456"
+    k = "fake_" + "K" * 30  # fake key
     assert k not in mask_secret(k)
     assert k not in scrub(f"bad key {k} here", [k])
 

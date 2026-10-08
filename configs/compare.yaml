@@ -1,10 +1,15 @@
 # D5 comparison with external services (ADR-0009). Same prompt template for every service.
 # Attempt 1 uses the template; from attempt 2 the prompt may name the accessory and where it
 # is (fairness rule, PLAN D5). One output image per call; at most 3 attempts per case.
+# "Image A" (draft) and "Image B" (reference) are rewritten to "Image 1"/"Image 2" in the
+# order each API receives them (the providers' documented naming). Changed after the single
+# Alibaba trial call (2026-10-08), which re-rendered the reference and ignored the draft with
+# the earlier "the first image / the second image" wording; same change for both providers.
 template: >-
-  Image A is my unfinished draft; Image B is one of my own finished illustrations.
-  Finish Image A in the style of Image B: colouring, shading and rendering.
-  Keep Image A's composition, characters, pose and every detail exactly.
+  Image A is my unfinished draft. Image B is one of my own finished illustrations, used only
+  as a style reference. Output a finished version of Image A: same characters, composition,
+  pose and every detail as Image A, with the colouring, shading and rendering style of
+  Image B. Do not copy the content of Image B.
 accessory_hint: >-
   Keep the {accessory} {where}, and render it like the same ornament in Image B.
 attempts: 3
