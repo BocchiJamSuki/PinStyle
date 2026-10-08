@@ -19,7 +19,7 @@ Last updated: 2026-10-08
 
 ## Needed from the owner
 - **D4 browser check:** the app is running on the server (tmux `app`). Open `ssh -L 7860:127.0.0.1:7860 -p 39283 root@connect.westb.seetacloud.com`, then http://127.0.0.1:7860. Try (default case shichimi_flat): Load case → click the ivory horn beside the blonde girl in the reference (lower right of her head) → click the white horn beside Shichimi's head in the draft → type "white horn hair ornament" in tags → "Global + PinStyle".
-- **D5 blind review (human step):** on the laptop, open `D:\Code\PinStyle\local_runseview\index.html` in a browser. For each of the 24 images, mark it acceptable or not and tick the failure types, then press "Save labels" and put `review_labels.json` into `local_runs/review/`. Tell Claude Code when it is done, and the report will be built.
+- **D5 blind review (human step):** on the laptop, open `D:/Code/PinStyle/local_runs/review/index.html` in a browser. For each of the 24 images, mark it acceptable or not and tick the failure types, then press "Save labels" and put `review_labels.json` into `local_runs/review/`. Tell Claude Code when it is done, and the report will be built.
 - **The server was shut down on 2026-10-08** (no GPU work is pending). To use the app again, start the instance and tell Claude Code.
 - D5 keys received 2026-10-07 (Tencent TokenHub, Alibaba Model Studio), validated free; nothing else needed until the D5 blind review.
 - Midjourney: skipped.
