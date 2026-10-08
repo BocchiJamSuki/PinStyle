@@ -69,6 +69,7 @@ def sdxl_stack(device: str = "cuda") -> Stack:
         image_encoder_folder=None,
     )
     pipe.to(device)
-    img2img = StableDiffusionXLControlNetImg2ImgPipeline.from_pipe(pipe)
-    inpaint = StableDiffusionXLControlNetInpaintPipeline.from_pipe(pipe)
+    # from_pipe casts shared modules to fp32 unless torch_dtype is given (D2: OOM at 1024 px).
+    img2img = StableDiffusionXLControlNetImg2ImgPipeline.from_pipe(pipe, torch_dtype=dt)
+    inpaint = StableDiffusionXLControlNetInpaintPipeline.from_pipe(pipe, torch_dtype=dt)
     return Stack(pipe, img2img, inpaint, revisions())
