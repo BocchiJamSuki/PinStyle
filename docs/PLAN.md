@@ -66,7 +66,7 @@ See [ADR-0008](decisions/0008-execution-topology.md).
 | H | Docs updated for the demo scope; repo initialized | ✅ 2026-10-05 (laptop) | – | – | git remote URL, to push |
 | D0 | Environment + CUDA smoke test | ✅ 2026-10-08: smoke_cuda and smoke_models pass (`20261008T092942Z_smoke_models`; 11.98 GiB peak); models verified (ADR-0009); env frozen in `requirements.lock.txt` | 0.5–1 | < 1 | the persistent path on the box |
 | D1 | CC image shortlist (approval gate) | ✅ 2026-10-06: 8 Pepper&Carrot works by David Revoy (CC BY 4.0), 3 characters, approved under delegation. Source files have no line-art layers (only paint layers; checked ep35 pages and the 2019 Shichimi artwork), so all drafts are `simulated` | 0.5–1 | 0 | approve the shortlist |
-| D2 | Global path | ⬜ | 1–1.5 | 1–2 | – |
+| D2 | Global path | ✅ 2026-10-08: txt2img + MistoLine + IP-Adapter (InstantStyle), 4–7 s at 1024 px. Detail case: Pepper's red hair ribbon, misrendered or lost in 6/6 runs (EXPERIMENTS D2). Coriander line art too sparse (follow-up) | 1–1.5 | 1–2 | – |
 | D3 | Engine A + detail case end to end (CLI) | ⬜ | 2–3 | 2–4 | – |
 | D4 | Gradio app + concept screens | ⬜ | 1.5–2.5 | ~1 | UI feedback |
 | D5 | Comparison runner + report | ⬜ | 2–3 | 1–2 | Keys in `.env` (done 2026-10-07); budget CNY 5 per provider, spend ≤ 80%; reviews (~1–2 h) |
@@ -163,15 +163,15 @@ Legend: ⬜ not started · 🔄 in progress · ✅ done · ⛔ blocked.
 
 **Tasks**
 
-- [ ] Get the draft:
+- [x] Get the draft:
   - use the artist's real line art where it exists (`draft_source = artist_lineart`);
   - otherwise simulate it from a finished work (`simulated`): line art (TEED/MTEED, or XDoG/Canny) plus optional flat-colour quantization.
-- [ ] Global path:
+- [x] Global path:
   - SDXL + MistoLine ControlNet on the draft's line art;
   - IP-Adapter on the reference, using InstantStyle's style-block scales;
   - choose txt2img + ControlNet or img2img from the draft, by a quick check.
-- [ ] CLI `pinstyle global --case <id>`, writing run records.
-- [ ] **Find the detail case.** Run strong global transfer on the approved pairs with at least 3 seeds, and identify a small accessory that is lost or misrendered (wrong colour or material, garbled shape). Document it with run IDs and never stage it.
+- [x] CLI `pinstyle global --case <id>`, writing run records.
+- [x] **Find the detail case.** Run strong global transfer on the approved pairs with at least 3 seeds, and identify a small accessory that is lost or misrendered (wrong colour or material, garbled shape). Document it with run IDs and never stage it.
 
 **Done when** global-only outputs and latency are logged for every approved case, and one detail-loss case is documented across at least 3 seeds. If no such case is found, report that honestly, with next steps.
 
