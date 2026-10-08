@@ -9,6 +9,15 @@ cases:
     draft_mode: lines
     prompt: "a finished digital painting of a girl with long brown hair in a traditional Norwegian dress with a cat, red ribbon in her hair, high quality illustration"
     accessories: [red hair ribbon, silver brooch]
+  pepper_bergen_flat:
+    # Same pair, but the draft keeps the artist's flat colours (D3): the red ribbon is in the
+    # draft, as in the brief's necklace case. No Pepper reference contains a red ribbon.
+    source: pc_pepper_bergen_2024
+    reference: pc_pepper_portrait_2017
+    draft_source: simulated
+    draft_mode: flat
+    prompt: "a finished digital painting of a girl with long brown hair in a traditional Norwegian dress with a cat, red ribbon in her hair, high quality illustration"
+    accessories: [red hair ribbon, silver brooch]
   pepper_bergen_ref2021:
     source: pc_pepper_bergen_2024
     reference: pc_pepper_2021

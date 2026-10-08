@@ -6,7 +6,10 @@ working size and inpainted on the global output with
   - IP-Adapter images [reference region crop, full reference] and ip_adapter_masks
     [region mask, complement], scales [region scale, global scale];
   - the line-art ControlNet on the draft crop;
-then pasted back with a feathered mask. Region strength s maps to
+then pasted back with a feathered mask. With init_from_draft, the masked part of the crop is
+first replaced by the draft's own colours, so what the artist drew there (e.g. a red ribbon
+that global transfer lost) is re-rendered in the reference's style rather than reinvented.
+Region tags are appended to the prompt. Region strength s maps to
 IP scale = ip_min + (ip_max - ip_min) * s and denoise = d_min + (d_max - d_min) * s.
 """
 
@@ -40,6 +43,7 @@ class EngineAConfig:
     structure_strength: float = 0.8
     steps: int = 30
     guidance: float = 6.0
+    init_from_draft: bool = True
     prompt: str = "high quality illustration, detailed accessory"
     negative_prompt: str = "lowres, blurry, deformed, watermark, text"
 
@@ -96,6 +100,9 @@ class EngineA:
             m = Image.fromarray(tgt_mask[box[1] : box[3], box[0] : box[2]].astype(np.uint8) * 255)
             m = m.resize((ws, ws), Image.Resampling.NEAREST)
 
+            if c.init_from_draft:
+                crop_out = Image.composite(crop_draft, crop_out, m)
+
             rbox = bbox(ref_mask, 0.25, 64)
             ref_crop = ref.crop(rbox)
 
@@ -118,7 +125,7 @@ class EngineA:
             pipe.set_ip_adapter_scale([[ip_region, c.global_ip_scale]])
             gen = torch.Generator("cuda").manual_seed(seed)
             res = pipe(
-                prompt=c.prompt,
+                prompt=", ".join([c.prompt, *reg.tags]),
                 negative_prompt=c.negative_prompt,
                 image=crop_out,
                 mask_image=m,

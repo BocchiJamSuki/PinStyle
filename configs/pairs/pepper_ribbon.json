@@ -1,0 +1,9 @@
+{
+  "note": "D3 detail case. Target: the red ribbon at the back of Pepper's head in the draft. Reference (pc_pepper_portrait_2017, which has no ribbon): the red vest fabric, as the rendering style for red cloth.",
+  "pairs": [
+    {"id": "p1", "ref_xy": [0.36, 0.62], "tgt_xy": [0.585, 0.19]}
+  ],
+  "regions": [
+    {"region_id": "ribbon", "pair_ids": ["p1"], "strength": 0.6, "tags": ["red hair ribbon"]}
+  ]
+}

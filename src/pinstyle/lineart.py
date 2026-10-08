@@ -1,7 +1,9 @@
 """Draft simulation and ControlNet conditioning.
 
 A simulated draft is made from a finished work: line art (XDoG-style edges) optionally over
-flat colours (k-means quantization). The ControlNet input is the line art as white lines on
+flat colours. Flat colours use mean-shift segmentation by default; k-means (k <= 32) merges
+small accessories such as a red hair ribbon into the hair colour (D2), mean-shift keeps them.
+The ControlNet input is the line art as white lines on
 black, which is what line-art ControlNets such as MistoLine expect.
 """
 
@@ -42,12 +44,21 @@ def flat_colours(img: Image.Image, k: int = 8, seed: int = 0) -> Image.Image:
     return Image.fromarray(flat)
 
 
+def meanshift_colours(img: Image.Image, sp: int = 15, sr: int = 40) -> Image.Image:
+    """Mean-shift filtering: flattens shading but keeps small, distinctly coloured regions."""
+    rgb = np.ascontiguousarray(np.asarray(img.convert("RGB")))
+    return Image.fromarray(cv2.pyrMeanShiftFiltering(rgb, sp, sr))
+
+
 def simulate_draft(img: Image.Image, mode: str = "lines", k: int = 8) -> Image.Image:
-    """mode="lines": line art only; mode="flat": line art over flat colours."""
+    """mode="lines": line art only; "flat": line art over mean-shift colours;
+    "flat_kmeans": line art over k-means colours."""
     lines = np.asarray(extract_lines(img), dtype=np.float32) / 255.0
     if mode == "lines":
         base = np.ones((*lines.shape, 3), dtype=np.float32)
     elif mode == "flat":
+        base = np.asarray(meanshift_colours(img), dtype=np.float32) / 255.0
+    elif mode == "flat_kmeans":
         base = np.asarray(flat_colours(img, k=k), dtype=np.float32) / 255.0
     else:
         raise ValueError(mode)
