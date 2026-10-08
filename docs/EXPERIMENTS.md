@@ -296,3 +296,22 @@ Grids: `local_runs/colour_*_s0.jpg` and `local_runs/colour_seeds12.jpg`.
 - global 26.86 s (`20261008T124934Z_app_global_shichimi_flat_s0`);
 - PinStyle on the current output 38.02 s (`20261008T125012Z_app_local_on_current_shichimi_flat_s0`);
 - mark acceptable: OK.
+
+## D4 — owner's browser run and UI simplification (2026-10-08, laptop)
+
+**Browser run:** the owner ran the flow in a real browser.
+
+- Generate (img2img, all defaults): `20261008T125908Z_app_global_shichimi_flat_s0`.
+- Then one manual pin: reference (0.721, 0.482), draft (0.587, 0.180), followed by "PinStyle on current output": `20261008T130030Z_app_local_on_current_shichimi_flat_s0`.
+- Result: the dark scaled horn became a carved ivory horn with the reference's swirl pattern. Owner's verdict: "效果特别好". Screenshot: `local_runs/review/象牙弯角.webp`.
+- Change outside the region: MAD 0.008, SSIM 1.0. Region latency: 41.6 s.
+- This closes the D4 browser check.
+
+**UI simplification** (owner feedback: unused controls clutter the page)
+
+- **Removed:** the Load button (the case now loads on open or change), delete-by-id (replaced by "Undo last pin"), Mark acceptable (no longer needed after D5), and the coordinate, strength and group columns of the pin table.
+- **Collapsed:**
+  - Advanced settings: prompt, generation mode, rendering, structure, steps, seed, resolution;
+  - History.
+- **Renamed:** Generate / Fix pinned details / Generate + fix, with a one-line explanation of each.
+- **Pins:** tags are pre-filled from the case's accessory.

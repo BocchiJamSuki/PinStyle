@@ -19,15 +19,14 @@ Last updated: 2026-10-08
 
 ## In progress
 
-- **D4 🔄** The app works end to end, tested through its handlers with simulated clicks. The real browser click-through is pending (owner).
+- **D4 ✅** The owner's browser run reproduced the carved-horn fix. The UI was then simplified.
 - **D6 🔄** `README.md` and `docs/DEMO.md` are written. The dry run is pending (owner).
 
 ## Needed from the owner
 
-- **D4 browser check + D6 dry run, on the laptop (no server needed):**
+- **D6 dry run, on the laptop:**
   1. Run `conda activate pinstyle`, then `python -m pinstyle.app.ui`, and open http://127.0.0.1:7860.
-  2. Follow `docs/DEMO.md` and time it.
-  3. Tell Claude Code what felt wrong.
+  2. Follow `docs/DEMO.md` with the simplified page and time it.
 
 ## How to resume
 
