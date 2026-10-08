@@ -16,4 +16,4 @@ omegaconf
 scikit-image
 pytest
 pytest-socket==0.8.1
-ruff
+ruff==0.16.10  # the locked version; formatting differs between minor versions
