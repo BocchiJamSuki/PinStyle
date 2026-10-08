@@ -82,3 +82,9 @@ The first attempt ran out of memory at 1024 px: `from_pipe` cast the shared modu
 - The draft is simulated, and its flats come from the finished work.
 - The ribbon's appearance comes from the draft plus a region tag. The reference supplies only rendering style, because no reference contains the ribbon.
 - 1 of 3 seeds is only a partial fix.
+
+## D4 — Gradio app (2026-10-08)
+
+- Unit tests: `tests/test_pairs.py` (10 tests on the pair-state logic). Full suite: 23 passed with sockets blocked.
+- End-to-end handler test on the server, in the app's process with simulated clicks at the D3 coordinates: load case → pair p1 (tag "red hair ribbon") → global only (7.67 s, `20261008T100211Z_app_global_pepper_bergen_flat_s0`) → PinStyle on the current output (7.66 s, `20261008T100218Z_app_local_on_current_pepper_bergen_flat_s0`) → global + PinStyle (12.45 s, `20261008T100231Z_app_global_local_pepper_bergen_flat_s0`) → mark acceptable → compare two versions. All steps passed.
+- **Not yet done:** a manual click-through in a real browser, with screenshots. It needs the owner's SSH tunnel and is folded into the D6 dry run.

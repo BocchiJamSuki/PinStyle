@@ -68,7 +68,7 @@ See [ADR-0008](decisions/0008-execution-topology.md).
 | D1 | CC image shortlist (approval gate) | ✅ 2026-10-06: 8 Pepper&Carrot works by David Revoy (CC BY 4.0), 3 characters, approved under delegation. Source files have no line-art layers (only paint layers; checked ep35 pages and the 2019 Shichimi artwork), so all drafts are `simulated` | 0.5–1 | 0 | approve the shortlist |
 | D2 | Global path | ✅ 2026-10-08: txt2img + MistoLine + IP-Adapter (InstantStyle), 4–7 s at 1024 px. Detail case: Pepper's red hair ribbon, misrendered or lost in 6/6 runs (EXPERIMENTS D2). Coriander line art too sparse (follow-up) | 1–1.5 | 1–2 | – |
 | D3 | Engine A + detail case end to end (CLI) | ✅ 2026-10-08: 1 point pair restores Pepper's red ribbon in 2/3 seeds (partial in 1/3); outside MAD ≤ 0.004, SSIM 0.9999; 5–7 s per region at 1024 px (EXPERIMENTS D3) | 2–3 | 2–4 | – |
-| D4 | Gradio app + concept screens | ⬜ | 1.5–2.5 | ~1 | UI feedback |
+| D4 | Gradio app + concept screens | 🔄 2026-10-08: app built; pair logic unit-tested; end-to-end handler test passed. Browser click-through with screenshots pending (owner tunnel) | 1.5–2.5 | ~1 | UI feedback |
 | D5 | Comparison runner + report | ⬜ | 2–3 | 1–2 | Keys in `.env` (done 2026-10-07); budget CNY 5 per provider, spend ≤ 80%; reviews (~1–2 h) |
 | D6 | README + 2-minute demo script | ⬜ | 0.5–1 | < 1 | a dry run |
 | **Total** | | | **8–13 (~2–3 weeks)** | **≈ 5–10** | API cost, rough estimate: ≈ $5–30 |
