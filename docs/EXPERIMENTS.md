@@ -122,3 +122,45 @@ The score under-counts, because the re-rendered ribbon does not sit exactly on t
 - A dark reference region (B) suppresses it.
 - So D3 shows *detail protection* (keeping what the artist drew in a region that global transfer loses). It does **not** show *regional style transfer from a chosen reference region*.
 - That needs a case where the same accessory appears in both the reference and the draft (next step).
+
+## D3b — the main detail case: Shichimi's horn ornament (2026-10-08)
+
+**Why this case:** the same accessory, Shichimi's white horn hair ornament, is in both the draft (`pc_shichimi_concept_2015`, plain white) and the reference (`pc_shichimi_torreya_2025`, carved ivory with engraved swirls). Both images were already approved. So this case can test what the reference region contributes, which the Pepper case could not.
+
+**Setup**
+
+- Case `shichimi_flat` (flat draft). One pair: `configs/pairs/shichimi_ornament.json`.
+  - Target: the horn, at (0.582, 0.175).
+  - Negative points: the hair and the paper crane.
+  - Reference: the 2025 horn, at (0.725, 0.495).
+- Ablation `shichimi_ornament_refbg.json`: the same, but with the reference point on the plain paper background (0.88, 0.2).
+- Both use draft init, strength 0.6, tag "white horn hair ornament".
+- Global structure strength 0.7 (default) and 1.0. Seeds 0–2.
+- An earlier batch (`20261008T104507Z`–`104814Z`) put the target point on the background just below the horn, so SAM masked the hand and hair. It is excluded and kept on the server.
+
+**Results** (visual, by the developer; grid `local_runs/d3c/grid.jpg`; figure `local_runs/d3c/figure_shichimi_s0.png`)
+
+| Structure | Seed | Run ID (reference on the horn) | Run ID (reference on the background) | Global-only horn | PinStyle, reference on the horn | PinStyle, reference on the background |
+|---|---|---|---|---|---|---|
+| 0.7 | 0 | `20261008T105124Z` | `20261008T105218Z` | dark red horn (misrendered) | carved ivory horn with swirls | blonde hair-like blob |
+| 0.7 | 1 | `20261008T105134Z` | `20261008T105229Z` | grey striped frame (misrendered) | carved ivory horn with swirls | blonde hair-like blob |
+| 0.7 | 2 | `20261008T105145Z` | `20261008T105240Z` | none (lost) | carved ivory horn with swirls | blob with a small face |
+| 1.0 | 0 | `20261008T105313Z` | `20261008T105408Z` | dark red horn (misrendered) | carved ivory horn with swirls | hair-like blob |
+| 1.0 | 1 | `20261008T105323Z` | `20261008T105419Z` | purple striped shape (misrendered) | carved ivory horn with swirls | blonde blob |
+| 1.0 | 2 | `20261008T105335Z` | `20261008T105430Z` | plain pale grey horn (shape kept, no carving) | carved ivory horn with swirls | blob with a small face |
+
+- Change outside the region against global-only: MAD 0.003–0.006, SSIM 0.9998–1.0, in all 12 runs.
+- Local latency: 5.06–7.26 s.
+
+**Conclusion**
+
+- With one point pair on the reference's horn, the horn is rendered as the reference's carved ivory ornament in 6/6 runs.
+- With the reference point moved to the background, and everything else identical (including draft init), it is not rendered in 6/6 runs.
+- So the reference region, not the draft init, determines how the accessory is rendered. This is the regional-transfer half that the Pepper ablation could not show.
+- Global-only loses or misrenders the horn in 5/6 runs. In the 6th, the shape survives but without the carving.
+
+**Limits**
+
+- The draft is simulated.
+- The judgements are by the developer.
+- The global pass also drifts the hair colour from white to blonde, under the reference's global style. That is a separate global-style issue and is not corrected here.

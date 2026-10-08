@@ -263,7 +263,7 @@ def build() -> gr.Blocks:
         gr.Markdown("# PinStyle — pin your own style onto regions of a draft")
         with gr.Tab("Finish"):
             with gr.Row():
-                case_dd = gr.Dropdown(case_ids(), label="Case", value="pepper_bergen_flat")
+                case_dd = gr.Dropdown(case_ids(), label="Case", value="shichimi_flat")
                 load_btn = gr.Button("Load case")
             status = gr.Markdown()
             with gr.Row():

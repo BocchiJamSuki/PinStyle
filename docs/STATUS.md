@@ -5,7 +5,7 @@ Last updated: 2026-10-08
 ## Done
 - D0 ✅ (2026-10-08): smoke tests pass; 11.98 GiB peak; env frozen.
 - D2 ✅: global path; detail case = Pepper's red hair ribbon, misrendered or lost in 6/6 global runs.
-- D3 ✅: one point pair restores the ribbon (2/3 seeds clean, 1/3 partial); 5–7 s per region; figure in `local_runs/d3/`.
+- D3 ✅: main case = Shichimi's horn ornament. Reference point on the horn: carved ornament 6/6; on the background: 0/6. Pepper ribbon ablation: its colour came from the draft, not the reference (EXPERIMENTS).
 - D4 🔄: Gradio app built and tested end to end (handlers); browser click-through pending.
 - Docs: verification, full plan (future work), demo scope (ADR-0006), image policy (ADR-0007), topology (ADR-0008).
 - Laptop ↔ GitHub and laptop ↔ AutoDL key-based SSH working. Server: RTX 4090 D 24 GB, driver 595.71.05, /root/autodl-tmp 150 GB (112 GB free), conda 24.4.0.
@@ -17,7 +17,7 @@ Last updated: 2026-10-08
 - D0 — environment and CUDA smoke test on the server (huggingface_hub pin relaxed to <2 for diffusers 0.40).
 
 ## Needed from the owner
-- **D4 browser check:** the app is running on the server (tmux `app`). Open `ssh -L 7860:127.0.0.1:7860 -p 39283 root@connect.westb.seetacloud.com`, then http://127.0.0.1:7860. Try: Load case → click the reference's red vest → click the draft's ribbon → type "red hair ribbon" in tags → "Global + PinStyle".
+- **D4 browser check:** the app is running on the server (tmux `app`). Open `ssh -L 7860:127.0.0.1:7860 -p 39283 root@connect.westb.seetacloud.com`, then http://127.0.0.1:7860. Try (default case shichimi_flat): Load case → click the ivory horn beside the blonde girl in the reference (lower right of her head) → click the white horn beside Shichimi's head in the draft → type "white horn hair ornament" in tags → "Global + PinStyle".
 - **D5 go-ahead:** paid calls to Tencent and Alibaba (estimate CNY 3.8 each, within the CNY 4 cap). Not started, as instructed.
 - **The server is still on** because of the app. Shut it down in the console when you are done, or tell Claude Code to.
 - D5 keys received 2026-10-07 (Tencent TokenHub, Alibaba Model Studio), validated free; nothing else needed until the D5 blind review.
