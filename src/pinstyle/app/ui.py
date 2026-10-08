@@ -24,6 +24,12 @@ from pinstyle.runs import new_run_dir, write_record  # noqa: E402
 
 log = logging.getLogger("pinstyle.app")
 
+# "Keep draft content" starts from the (flat) draft, so content and colours stay aligned with
+# it and the colour control blends cleanly; "Free re-render" generates from noise under the
+# line art (more of the reference's rendering, but it can drop draft content). Colour
+# experiment, 2026-10-08 (EXPERIMENTS).
+GEN_MODES = {"Keep draft content (img2img)": "img2img", "Free re-render (txt2img)": "txt2img"}
+
 
 def _stack():
     from pinstyle.models import sdxl_stack
@@ -118,6 +124,7 @@ def run(
     state,
     versions,
     prompt,
+    gen_mode,
     style,
     colour,
     structure,
@@ -133,6 +140,8 @@ def run(
     stack = _stack()
     settings = GlobalSettings(
         prompt=prompt,
+        mode=GEN_MODES[gen_mode],
+        img2img_strength=0.75,
         style_strength=float(style),
         colour_strength=float(colour),
         structure_strength=float(structure),
@@ -283,11 +292,14 @@ def build() -> gr.Blocks:
                 clear_btn = gr.Button("Clear pairs")
             prompt = gr.Textbox(label="Prompt")
             with gr.Row():
+                gen_mode = gr.Dropdown(
+                    list(GEN_MODES), value=next(iter(GEN_MODES)), label="Generation"
+                )
                 style = gr.Slider(0, 1.5, 1.0, step=0.05, label="Rendering from reference")
                 colour = gr.Slider(
                     0, 1, 1.0, step=0.05, label="Colour from reference (0 = keep draft colours)"
                 )
-                structure = gr.Slider(0, 1.5, 0.7, step=0.05, label="Structure strength")
+                structure = gr.Slider(0, 1.5, 1.0, step=0.05, label="Structure strength")
                 steps = gr.Slider(4, 50, 30, step=1, label="Steps")
                 seed = gr.Number(0, precision=0, label="Seed")
                 resolution = gr.Dropdown([768, 1024], value=1024, label="Resolution")
@@ -318,7 +330,7 @@ def build() -> gr.Blocks:
         table.input(on_table_edit, [sess, state, table], state)
         del_btn.click(on_delete, [sess, state, del_id], [ref_img, draft_img, table, state])
         clear_btn.click(on_clear, [sess, state], [ref_img, draft_img, table, state])
-        settings = [prompt, style, colour, structure, steps, seed, resolution]
+        settings = [prompt, gen_mode, style, colour, structure, steps, seed, resolution]
         outs = [slider, versions, vtable, va, vb, status]
         for btn, mode in (
             (b_global, "global"),
@@ -338,6 +350,7 @@ def make_runner(mode: str):
         state,
         versions,
         prompt,
+        gen_mode,
         style,
         colour,
         structure,
@@ -353,6 +366,7 @@ def make_runner(mode: str):
                 state,
                 versions,
                 prompt,
+                gen_mode,
                 style,
                 colour,
                 structure,

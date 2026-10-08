@@ -70,7 +70,7 @@ See [ADR-0008](decisions/0008-execution-topology.md).
 | D3 | Engine A + detail case end to end (CLI) | ✅ 2026-10-08: main case = Shichimi's horn ornament. 1 pair on the reference's horn renders it as the reference's carved ornament in 6/6 runs; reference point on background: 0/6; global-only lost or misrendered 5/6. Outside SSIM ≥ 0.9998; 5–7 s per region. Pepper ribbon kept as a detail-protection case; its ablation shows that colour came from draft init (EXPERIMENTS D3, D3 ablation, D3b) | 2–3 | 2–4 | – |
 | D4 | Gradio app + concept screens | 🔄 2026-10-08: app built; pair logic unit-tested; end-to-end handler test passed. Browser click-through with screenshots pending (owner tunnel) | 1.5–2.5 | ~1 | UI feedback |
 | D5 | Comparison runner + report | ✅ 2026-10-08: blind review by the owner: global-only and PinStyle 3/3 (Pepper) and 1/3 (Shichimi) each; Tencent 0/6 (did not adopt the reference colours); Alibaba 0/6 (returned the reference). Spend CNY 1.20 + 1.40. `docs/D5_REPORT.md` | 2–3 | 1–2 | Keys in `.env` (done 2026-10-07); budget CNY 5 per provider, spend ≤ 80%; reviews (~1–2 h) |
-| D6 | README + 2-minute demo script | ⬜ | 0.5–1 | < 1 | a dry run |
+| D6 | README + 2-minute demo script | 🔄 2026-10-08: README and `docs/DEMO.md` written; runs on the laptop (ADR-0010). Owner dry run pending | 0.5–1 | < 1 | a dry run |
 | **Total** | | | **8–13 (~2–3 weeks)** | **≈ 5–10** | API cost, rough estimate: ≈ $5–30 |
 
 Legend: ⬜ not started · 🔄 in progress · ✅ done · ⛔ blocked.

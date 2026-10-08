@@ -27,14 +27,30 @@ class Stack:
     _active: str = ""
 
     def use(self, name: str):
-        """The named pipeline, ready to run. In low-VRAM mode (ADR-0010) the shared modules
-        live in CPU RAM and model offload hooks are (re)attached for the pipeline about to
-        run; switching pipelines re-hooks the same modules."""
-        pipe = getattr(self, name)
-        if self.low_vram and self._active != name:
-            pipe.enable_model_cpu_offload()
-            self._active = name
-        return pipe
+        """The named pipeline, ready to run (all three share the same modules)."""
+        return getattr(self, name)
+
+
+def place_low_vram(pipe, device: str) -> None:
+    """ADR-0010. The small modules (text encoders, VAE, image encoder: ~2.9 GiB) stay on the
+    GPU; the UNet and ControlNet (~7.9 GiB together, more than an 8 GB card holds with
+    activations) are group-offloaded at leaf level with CUDA streams (prefetching overlaps
+    transfers). Block level kept whole blocks resident: 8.39 GiB peak, 46 s for 4 steps;
+    leaf level: 4.59 GiB peak, 6.3 s for 4 steps (RTX 4060 Laptop, 1024 px, 2026-10-08).
+    Plain model offload put both on the GPU at once and spilled into shared memory (8.4 GiB
+    peak, 418 s per 1024 px image on an RTX 4060 Laptop)."""
+    from diffusers.hooks import apply_group_offloading
+
+    for name in ("text_encoder", "text_encoder_2", "vae", "image_encoder"):
+        getattr(pipe, name).to(device)
+    for name in ("unet", "controlnet"):
+        apply_group_offloading(
+            getattr(pipe, name),
+            onload_device=torch.device(device),
+            offload_device=torch.device("cpu"),
+            offload_type="leaf_level",
+            use_stream=True,
+        )
 
 
 def low_vram_default() -> bool:
@@ -90,7 +106,9 @@ def sdxl_stack(device: str = "cuda") -> Stack:
         image_encoder_folder=None,
     )
     low = low_vram_default()
-    if not low:
+    if low:
+        place_low_vram(pipe, device)
+    else:
         pipe.to(device)
     # from_pipe casts shared modules to fp32 unless torch_dtype is given (D2: OOM at 1024 px).
     img2img = StableDiffusionXLControlNetImg2ImgPipeline.from_pipe(pipe, torch_dtype=dt)

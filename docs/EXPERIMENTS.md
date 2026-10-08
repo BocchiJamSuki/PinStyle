@@ -235,3 +235,64 @@ The score under-counts, because the re-rendered ribbon does not sit exactly on t
 - The owner labelled all 24 items (`local_runs/review/review_labels.json`). Its extra keys `sl`, `tl`, `query`, `gtrans` and `vote` come from a browser translation extension and are ignored.
 - Revealed with `python scripts/make_review.py --reveal …`, giving `runs/d5/review_revealed.csv`.
 - Report: `python scripts/make_report.py` writes `runs/d5/report/` (`report.md`, `summary.csv`, grids). It is copied, with interpretation, to `docs/D5_REPORT.md`.
+
+## Laptop execution (ADR-0010, 2026-10-08): RTX 4060 Laptop 8 GB, low-VRAM mode
+
+- **Models:** downloaded on the laptop and verified against the pinned HF hashes. Sources:
+  - ModelScope, with probes at 7–11 MB/s;
+  - MistoLine from huggingface.co (1.5 MB/s, no ModelScope copy).
+
+  ModelScope's `model_index.json` for SDXL failed verification, and the HF copy was used instead.
+- **Tests:** 34 passed. ruff is clean.
+- **Offload attempts:**
+
+  | Mode | Run ID or test | Result |
+  |---|---|---|
+  | diffusers model CPU offload | `20261008T122830Z_global_shichimi_flat_s0` | peak 8.4 GiB, spilled into shared memory, 417.7 s per 1024 px global pass |
+  | block-level group offload (stream) | `20261008T123359Z` | still 8.39 GiB, 271 s; 4-step test: 46.1 s |
+  | **leaf-level group offload (stream)** | 4-step test | 6.3 s, peak 4.59 GiB |
+
+- **Leaf-level, full runs** (`20261008T123744Z_pinstyle_shichimi_flat_s0`):
+  - global pass (txt2img, 30 steps) 35.6 s;
+  - one PinStyle region 39.8 s;
+  - peak 4.59 GiB.
+- **Cross-hardware reproducibility:** the same seed and settings on the 4060 and the 4090 (`20261008T105124Z`) give similar but not identical images. The mean absolute pixel difference is 14.75 (global) and 14.83 (PinStyle), on a 0–255 scale. The carved horn is present in both.
+
+## Colour vs rendering (2026-10-08, laptop)
+
+**Setup:** `scripts/exp_colour.py`.
+
+- 2 cases × 2 generation modes × seeds 0–2, at structure 1.0.
+- Modes: txt2img, and img2img from the flat draft at strength 0.75.
+- Each output is saved at colour_strength 1.0, 0.5 and 0.0. The chroma blend is a post-process, so the three variants differ only in colour.
+
+| Case | Mode | Run IDs (s0, s1, s2) | Latency (s) |
+|---|---|---|---|
+| shichimi_flat | txt2img | `20261008T123918Z`, `123954Z`, `124029Z` | 35.6 / 34.8 / 34.6 |
+| shichimi_flat | img2img | `20261008T124056Z`, `124122Z`, `124148Z` | 26.0 / 25.9 / 25.8 |
+| pepper_bergen_flat | txt2img | `20261008T124238Z`, `124324Z`, `124410Z` | 45.9 / 45.5 / 45.5 |
+| pepper_bergen_flat | img2img | `20261008T124446Z`, `124522Z`, `124600Z` | 34.8 / 36.1 / 36.6 |
+
+Grids: `local_runs/colour_*_s0.jpg` and `local_runs/colour_seeds12.jpg`.
+
+**Observations** (visual, developer):
+
+- **txt2img + colour 0 is muddy and greyish.** txt2img is not aligned with the draft (its shapes and background differ), so the draft's chroma lands in the wrong places. The colour control only helps on an aligned generation.
+- **img2img keeps the draft's content** in all 6 runs: the paper crane (sometimes misrendered dark or red, e.g. Shichimi s2), clouds, fox, the Bergen town, the yellow cat.
+  - With colour 0, it gives the draft's colours with the generated shading. Pepper's ribbon stays red.
+  - With colour 1, colours lean toward the reference: Shichimi's hair goes blonde, and Pepper becomes more muted.
+  - It takes less of the reference's rendering than txt2img (softer).
+  - New defect: red bleeds into the fox's legs (Shichimi, img2img).
+- **PinStyle on an img2img global pass still renders the carved horn** (`20261008T124815Z_pinstyle_shichimi_flat_s0`). The global-only horn there is a dark scaled horn, which is misrendered.
+
+**Decision:**
+
+- The app now offers *Generation: Keep draft content (img2img, default) / Free re-render (txt2img)*, with structure 1.0 by default.
+- *Colour from reference* defaults to 1.0. That is the owner's reading: colours follow the reference, and the artist can lower it.
+- The CLI default stays txt2img, so that the D2/D3 runs remain reproducible.
+
+**App end-to-end on the laptop** (handlers with simulated clicks, img2img, colour 0):
+
+- global 26.86 s (`20261008T124934Z_app_global_shichimi_flat_s0`);
+- PinStyle on the current output 38.02 s (`20261008T125012Z_app_local_on_current_shichimi_flat_s0`);
+- mark acceptable: OK.
