@@ -75,7 +75,12 @@ def load_case_ui(case_id: str):
         [],
         case.prompt,
         None,
-        "**Step 1:** click **Generate**. **Step 2:** click a detail on the reference, then the "
+        (
+            "⚠️ **Debug case:** unverified images, for local testing only (not for the demo). "
+            if case_id.startswith("debug_")
+            else ""
+        )
+        + "**Step 1:** click **Generate**. **Step 2:** click a detail on the reference, then the "
         "same detail on the draft. **Step 3:** click **Fix pinned details**.",
     )
 
