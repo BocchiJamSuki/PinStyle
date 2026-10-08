@@ -120,13 +120,15 @@ class EngineA:
                     Image.fromarray(m_np.astype(np.uint8) * 255),
                     Image.fromarray((~m_np).astype(np.uint8) * 255),
                 ],
-                # latent resolution: the attention processors resize these masks at every
-                # layer and step, which took ~43 s per region from 1024² (D3 profile)
+                # the attention processors resize (and expand) these masks at every layer and
+                # step; on CPU that took ~43 s per region (D3 profile), so they live on the GPU
                 height=ws // 8,
                 width=ws // 8,
             )
             ip_masks = [
-                ip_masks.reshape(1, ip_masks.shape[0], ip_masks.shape[2], ip_masks.shape[3])
+                ip_masks.reshape(1, ip_masks.shape[0], ip_masks.shape[2], ip_masks.shape[3]).to(
+                    "cuda", torch.float16
+                )
             ]
             pipe = self.stack.inpaint
             pipe.set_ip_adapter_scale([[ip_region, c.global_ip_scale]])
