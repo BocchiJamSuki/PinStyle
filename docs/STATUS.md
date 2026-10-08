@@ -18,6 +18,7 @@ Last updated: 2026-10-08
 - D0 — environment and CUDA smoke test on the server (huggingface_hub pin relaxed to <2 for diffusers 0.40).
 
 ## Needed from the owner
+- **Start the server (GPU mode)** for the colour-vs-rendering experiment (D5 follow-up). Code is pushed.
 - **D4 browser check:** the app is running on the server (tmux `app`). Open `ssh -L 7860:127.0.0.1:7860 -p 39283 root@connect.westb.seetacloud.com`, then http://127.0.0.1:7860. Try (default case shichimi_flat): Load case → click the ivory horn beside the blonde girl in the reference (lower right of her head) → click the white horn beside Shichimi's head in the draft → type "white horn hair ornament" in tags → "Global + PinStyle".
 - **The server was shut down on 2026-10-08** (no GPU work is pending). To use the app again, start the instance and tell Claude Code.
 - D5 keys received 2026-10-07 (Tencent TokenHub, Alibaba Model Studio), validated free; nothing else needed until the D5 blind review.

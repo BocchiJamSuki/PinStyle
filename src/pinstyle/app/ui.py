@@ -119,6 +119,7 @@ def run(
     versions,
     prompt,
     style,
+    colour,
     structure,
     steps,
     seed,
@@ -133,6 +134,7 @@ def run(
     settings = GlobalSettings(
         prompt=prompt,
         style_strength=float(style),
+        colour_strength=float(colour),
         structure_strength=float(structure),
         steps=int(steps),
         seed=int(seed),
@@ -281,7 +283,10 @@ def build() -> gr.Blocks:
                 clear_btn = gr.Button("Clear pairs")
             prompt = gr.Textbox(label="Prompt")
             with gr.Row():
-                style = gr.Slider(0, 1.5, 1.0, step=0.05, label="Style strength")
+                style = gr.Slider(0, 1.5, 1.0, step=0.05, label="Rendering from reference")
+                colour = gr.Slider(
+                    0, 1, 1.0, step=0.05, label="Colour from reference (0 = keep draft colours)"
+                )
                 structure = gr.Slider(0, 1.5, 0.7, step=0.05, label="Structure strength")
                 steps = gr.Slider(4, 50, 30, step=1, label="Steps")
                 seed = gr.Number(0, precision=0, label="Seed")
@@ -313,7 +318,7 @@ def build() -> gr.Blocks:
         table.input(on_table_edit, [sess, state, table], state)
         del_btn.click(on_delete, [sess, state, del_id], [ref_img, draft_img, table, state])
         clear_btn.click(on_clear, [sess, state], [ref_img, draft_img, table, state])
-        settings = [prompt, style, structure, steps, seed, resolution]
+        settings = [prompt, style, colour, structure, steps, seed, resolution]
         outs = [slider, versions, vtable, va, vb, status]
         for btn, mode in (
             (b_global, "global"),
@@ -334,6 +339,7 @@ def make_runner(mode: str):
         versions,
         prompt,
         style,
+        colour,
         structure,
         steps,
         seed,
@@ -348,6 +354,7 @@ def make_runner(mode: str):
                 versions,
                 prompt,
                 style,
+                colour,
                 structure,
                 steps,
                 seed,

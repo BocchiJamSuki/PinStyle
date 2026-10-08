@@ -10,6 +10,7 @@ from dataclasses import asdict, dataclass
 import torch
 from PIL import Image
 
+from pinstyle.colour import blend_chroma
 from pinstyle.lineart import control_image
 
 NEG = "lowres, blurry, deformed, watermark, text, signature"
@@ -20,7 +21,10 @@ class GlobalSettings:
     prompt: str = "a finished digital painting of a character, high quality illustration"
     negative_prompt: str = NEG
     mode: str = "txt2img"  # or "img2img"
-    style_strength: float = 1.0  # IP-Adapter scale on style blocks
+    style_strength: float = 1.0  # rendering: IP-Adapter scale on style blocks
+    # colour: 1 = colours from the generation (the reference's), 0 = the draft's colours
+    # (Lab chroma blend, lightness kept; needs a coloured draft). See pinstyle.colour.
+    colour_strength: float = 1.0
     style_blocks: str = "instantstyle"  # "instantstyle" (up.block_0) or "all"
     structure_strength: float = 0.7  # ControlNet conditioning scale
     img2img_strength: float = 0.8
@@ -71,6 +75,8 @@ def run_global(
     else:
         raise ValueError(s.mode)
     torch.cuda.synchronize()
+    if s.colour_strength < 1.0:
+        out = blend_chroma(out, draft_r, s.colour_strength)
     info = {
         "settings": asdict(s),
         "size": list(size),

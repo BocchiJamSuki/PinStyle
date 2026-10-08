@@ -67,8 +67,13 @@ class Ledger:
 def check_budget(ledger: Ledger, provider: ImageProvider, planned_calls: int, cap: float) -> dict:
     spent = ledger.spent(provider.name)
     est = round(planned_calls * provider.price_cny, 4)
-    info = {"provider": provider.name, "spent_cny": spent, "planned_calls": planned_calls,
-            "estimate_cny": est, "cap_cny": cap}
+    info = {
+        "provider": provider.name,
+        "spent_cny": spent,
+        "planned_calls": planned_calls,
+        "estimate_cny": est,
+        "cap_cny": cap,
+    }
     if spent + est > cap + 1e-9:
         raise BudgetExceeded(json.dumps(info))
     return info
@@ -116,10 +121,19 @@ def generate(
         **res.meta,
     }
     rec_path.write_text(json.dumps(rec, indent=2, ensure_ascii=False))
-    ledger.add({"utc": rec["utc"], "provider": provider.name, "model": provider.model,
-                "key": key, "images": 1, "cost_cny": provider.price_cny,
-                "running_total_cny": round(ledger.spent(provider.name) + provider.price_cny, 4),
-                "request_id": rec.get("request_id"), **tag})
+    ledger.add(
+        {
+            "utc": rec["utc"],
+            "provider": provider.name,
+            "model": provider.model,
+            "key": key,
+            "images": 1,
+            "cost_cny": provider.price_cny,
+            "running_total_cny": round(ledger.spent(provider.name) + provider.price_cny, 4),
+            "request_id": rec.get("request_id"),
+            **tag,
+        }
+    )
     rec["cached"] = False
     return res.image, rec
 

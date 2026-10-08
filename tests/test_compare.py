@@ -56,10 +56,12 @@ def test_cache_prevents_repeat_calls_and_ledger_records(tmp_path):
     d, r = imgs()
     calls = []
     p = PROVIDERS["tencent"]
-    _, rec1 = runner.generate(p, d, r, "prompt", 1, tag={"case": "c"}, root=tmp_path,
-                              send=fake_send(calls))
-    _, rec2 = runner.generate(p, d, r, "prompt", 1, tag={"case": "c"}, root=tmp_path,
-                              send=fake_send(calls))
+    _, rec1 = runner.generate(
+        p, d, r, "prompt", 1, tag={"case": "c"}, root=tmp_path, send=fake_send(calls)
+    )
+    _, rec2 = runner.generate(
+        p, d, r, "prompt", 1, tag={"case": "c"}, root=tmp_path, send=fake_send(calls)
+    )
     assert calls == ["tencent"]
     assert rec1["cached"] is False and rec2["cached"] is True
     led = runner.Ledger(tmp_path / "ledger.jsonl")
@@ -73,9 +75,7 @@ def test_budget_guard_blocks_before_sending(tmp_path):
     calls = []
     p = PROVIDERS["alibaba"]
     for i in range(2):
-        runner.generate(p, d, r, f"p{i}", 1, tag={}, root=tmp_path, cap=0.4,
-                        send=fake_send(calls))
+        runner.generate(p, d, r, f"p{i}", 1, tag={}, root=tmp_path, cap=0.4, send=fake_send(calls))
     with pytest.raises(runner.BudgetExceeded):
-        runner.generate(p, d, r, "p3", 1, tag={}, root=tmp_path, cap=0.4,
-                        send=fake_send(calls))
+        runner.generate(p, d, r, "p3", 1, tag={}, root=tmp_path, cap=0.4, send=fake_send(calls))
     assert len(calls) == 2
