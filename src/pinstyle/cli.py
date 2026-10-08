@@ -104,6 +104,7 @@ def cmd_run(args: argparse.Namespace) -> None:
     case = load_case(args.case)
     spec, pairs, regions = load_pairs(args.pairs, args.strength)
     engine = EngineA(stack)
+    engine.cfg.init_from_draft = not args.no_init_from_draft
     for seed in args.seeds:
         s = settings_from(args, case.prompt, seed)
         glob_out, ginfo, ctrl = run_global(stack, case.draft, case.reference_image(), s)
@@ -148,6 +149,7 @@ def main() -> None:
     r.add_argument("--pairs", required=True)
     r.add_argument("--seeds", type=int, nargs="+", default=[0])
     r.add_argument("--strength", type=float, default=None)
+    r.add_argument("--no-init-from-draft", action="store_true")
     add_settings_args(r)
     args = ap.parse_args()
     {"global": cmd_global, "run": cmd_run}[args.cmd](args)

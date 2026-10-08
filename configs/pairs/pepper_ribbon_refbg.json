@@ -1,0 +1,28 @@
+{
+  "note": "D3 ablation: reference point on the blue background instead of the red vest.",
+  "pairs": [
+    {
+      "id": "p1",
+      "ref_xy": [
+        0.85,
+        0.45
+      ],
+      "tgt_xy": [
+        0.585,
+        0.19
+      ]
+    }
+  ],
+  "regions": [
+    {
+      "region_id": "ribbon",
+      "pair_ids": [
+        "p1"
+      ],
+      "strength": 0.6,
+      "tags": [
+        "red hair ribbon"
+      ]
+    }
+  ]
+}
