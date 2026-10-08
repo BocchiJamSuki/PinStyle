@@ -89,6 +89,7 @@ class EngineA:
             ref = references[rp[0].ref_index].convert("RGB")
             tgt_mask = sam_mask(draft, [p.tgt_xy for p in rp], reg.negative_tgt_xy)
             ref_mask = sam_mask(ref, [p.ref_xy for p in rp])
+            core_mask = tgt_mask
             tgt_mask = dilate(tgt_mask, c.dilate_px)
 
             # crop around the target region and upscale to the working size
@@ -101,7 +102,11 @@ class EngineA:
             m = m.resize((ws, ws), Image.Resampling.NEAREST)
 
             if c.init_from_draft:
-                crop_out = Image.composite(crop_draft, crop_out, m)
+                # only inside the undilated mask: the dilated ring would carry the draft's
+                # background colour into the result (a halo, D3 run 1)
+                core = core_mask[box[1] : box[3], box[0] : box[2]].astype(np.uint8) * 255
+                core = Image.fromarray(core).resize((ws, ws), Image.Resampling.NEAREST)
+                crop_out = Image.composite(crop_draft, crop_out, core)
 
             rbox = bbox(ref_mask, 0.25, 64)
             ref_crop = ref.crop(rbox)
@@ -115,8 +120,10 @@ class EngineA:
                     Image.fromarray(m_np.astype(np.uint8) * 255),
                     Image.fromarray((~m_np).astype(np.uint8) * 255),
                 ],
-                height=ws,
-                width=ws,
+                # latent resolution: the attention processors resize these masks at every
+                # layer and step, which took ~43 s per region from 1024² (D3 profile)
+                height=ws // 8,
+                width=ws // 8,
             )
             ip_masks = [
                 ip_masks.reshape(1, ip_masks.shape[0], ip_masks.shape[2], ip_masks.shape[3])
