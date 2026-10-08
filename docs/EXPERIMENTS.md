@@ -164,3 +164,37 @@ The score under-counts, because the re-rendered ribbon does not sit exactly on t
 - The draft is simulated.
 - The judgements are by the developer.
 - The global pass also drifts the hair colour from white to blonde, under the reference's global style. That is a separate global-style issue and is not corrected here.
+
+## D5 — external services, first results (2026-10-08)
+
+**Ledger** (`runs/d5/ledger.jsonl` on the laptop, copied here, no keys; prices from THIRD_PARTY §0.3):
+
+| UTC | Provider | Model | Case | Attempt | Request ID | CNY | Running total |
+|---|---|---|---|---|---|---|---|
+| 2026-10-08T10:59:51Z | alibaba | qwen-image-edit-plus-2025-12-15 | shichimi_flat | 0 | 9b2fdad7-a85a-9356-a953-45a567c5859f | 0.2 | 0.2 |
+| 2026-10-08T11:00:52Z | alibaba | qwen-image-edit-plus-2025-12-15 | shichimi_flat | 1 | d7963f83-2ce5-9a64-8196-6d29e13503a8 | 0.2 | 0.4 |
+| 2026-10-08T11:01:09Z | alibaba | qwen-image-edit-plus-2025-12-15 | shichimi_flat | 2 | 10d3cba8-a8a8-981f-bb7b-dd0167b5cb3d | 0.2 | 0.6 |
+| 2026-10-08T11:01:23Z | alibaba | qwen-image-edit-plus-2025-12-15 | shichimi_flat | 3 | a181e762-6078-9b0c-acdf-02dc5168a580 | 0.2 | 0.8 |
+| 2026-10-08T11:01:39Z | alibaba | qwen-image-edit-plus-2025-12-15 | pepper_bergen_flat | 1 | 87b83682-59e3-914d-909c-e30fb5321488 | 0.2 | 1.0 |
+| 2026-10-08T11:01:56Z | alibaba | qwen-image-edit-plus-2025-12-15 | pepper_bergen_flat | 2 | 86b104e1-9dd9-9858-813d-759eafe70190 | 0.2 | 1.2 |
+| 2026-10-08T11:02:13Z | alibaba | qwen-image-edit-plus-2025-12-15 | pepper_bergen_flat | 3 | b89234be-5a88-9603-b753-54406639801a | 0.2 | 1.4 |
+
+**Tencent `hy-image-v3`:** not run. The trial call returned HTTP 402: "No free trial quota is available for the service and postpaid billing is not enabled". TokenHub needs postpaid billing enabled in the console (Online Inference Service). This is an owner action. Nothing was charged.
+
+**Alibaba `qwen-image-edit-plus-2025-12-15`**
+
+- 1 trial plus 2 cases × 3 attempts, one image per call:
+  - `shichimi_flat`: 720×1024;
+  - `pepper_bergen_flat`: 1024×1024.
+- Inputs: the reference first, then the draft, because the output follows the last image's aspect ratio. Both cases use the same template (`configs/compare.yaml`); attempts 2–3 name the accessory and where it is.
+- The response has no `model` field. `usage` reports image_count, width and height.
+- Template history: the trial (attempt 0) used the wording "the first image / the second image" and re-rendered the reference. The template was then changed, identically for every provider, to the documented "Image 1 / Image 2" naming, with an explicit draft/reference role and "Do not copy the content of Image 2/1".
+
+**Outcome (visual, developer; blind review pending)**
+
+- In 6/6 attempts, the output **re-renders the reference's content** (characters, pose, costume, composition) and ignores the draft.
+  - Shichimi: Torreya and Shichimi as in the reference. Attempt 2 changes the blonde girl's hair to white, and attempt 3 adds a small white horn.
+  - Pepper: the 2017 portrait's hat and vest. Attempt 1 shows two copies of her, and attempt 3 has a checkerboard ("transparent") background.
+- Taxonomy: structure change and not controllable, in 6/6.
+- Grid: `local_runs/d5_alibaba.jpg`.
+- **Limit:** image order may matter. The draft-last order follows the documentation, and no further attempts were made, per the 3-attempt cap.
