@@ -42,29 +42,39 @@ def ip_scale(s: GlobalSettings) -> float | dict:
     return {"up": {"block_0": [0.0, s.style_strength, 0.0]}}
 
 
-def run_global(stack, draft: Image.Image, reference: Image.Image,
-               s: GlobalSettings) -> tuple[Image.Image, dict, Image.Image]:
+def run_global(
+    stack, draft: Image.Image, reference: Image.Image, s: GlobalSettings
+) -> tuple[Image.Image, dict, Image.Image]:
     """Return (output, info, control image)."""
     size = fit_size(draft, s.resolution)
     draft_r = draft.convert("RGB").resize(size, Image.Resampling.LANCZOS)
     ctrl = control_image(draft_r)
     gen = torch.Generator("cuda").manual_seed(s.seed)
-    common = dict(prompt=s.prompt, negative_prompt=s.negative_prompt,
-                  ip_adapter_image=reference.convert("RGB"),
-                  controlnet_conditioning_scale=s.structure_strength,
-                  num_inference_steps=s.steps, guidance_scale=s.guidance, generator=gen)
+    common = dict(
+        prompt=s.prompt,
+        negative_prompt=s.negative_prompt,
+        ip_adapter_image=reference.convert("RGB"),
+        controlnet_conditioning_scale=s.structure_strength,
+        num_inference_steps=s.steps,
+        guidance_scale=s.guidance,
+        generator=gen,
+    )
     t0 = time.perf_counter()
     if s.mode == "txt2img":
         stack.txt2img.set_ip_adapter_scale(ip_scale(s))
         out = stack.txt2img(image=ctrl, width=size[0], height=size[1], **common).images[0]
     elif s.mode == "img2img":
         stack.img2img.set_ip_adapter_scale(ip_scale(s))
-        out = stack.img2img(image=draft_r, control_image=ctrl, strength=s.img2img_strength,
-                            **common).images[0]
+        out = stack.img2img(
+            image=draft_r, control_image=ctrl, strength=s.img2img_strength, **common
+        ).images[0]
     else:
         raise ValueError(s.mode)
     torch.cuda.synchronize()
-    info = {"settings": asdict(s), "size": list(size),
-            "latency_s": round(time.perf_counter() - t0, 2),
-            "peak_vram_gib": round(torch.cuda.max_memory_allocated() / 2**30, 2)}
+    info = {
+        "settings": asdict(s),
+        "size": list(size),
+        "latency_s": round(time.perf_counter() - t0, 2),
+        "peak_vram_gib": round(torch.cuda.max_memory_allocated() / 2**30, 2),
+    }
     return out, info, ctrl

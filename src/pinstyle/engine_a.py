@@ -52,17 +52,29 @@ class EngineA:
         self.stack = stack
         self.cfg = cfg or EngineAConfig()
 
-    def apply(self, global_output: Image.Image, draft: Image.Image,
-              references: Sequence[Image.Image], point_pairs: Sequence[PointPair],
-              region_settings: Sequence[RegionSettings], *, seed: int):
+    def apply(
+        self,
+        global_output: Image.Image,
+        draft: Image.Image,
+        references: Sequence[Image.Image],
+        point_pairs: Sequence[PointPair],
+        region_settings: Sequence[RegionSettings],
+        *,
+        seed: int,
+    ):
         from diffusers.image_processor import IPAdapterMaskProcessor
 
         c = self.cfg
         out = global_output.convert("RGB")
         draft = draft.convert("RGB").resize(out.size, Image.Resampling.LANCZOS)
         pairs = {p.id: p for p in point_pairs}
-        info: dict = {"engine": self.name, "version": self.version, "seed": seed,
-                      "config": asdict(c), "regions": {}}
+        info: dict = {
+            "engine": self.name,
+            "version": self.version,
+            "seed": seed,
+            "config": asdict(c),
+            "regions": {},
+        }
         layers: dict[str, Image.Image] = {}
         masks: dict[str, np.ndarray] = {}
         maskproc = IPAdapterMaskProcessor()
@@ -81,7 +93,7 @@ class EngineA:
             ws = c.work_size
             crop_out = out.crop(box).resize((ws, ws), Image.Resampling.LANCZOS)
             crop_draft = draft.crop(box).resize((ws, ws), Image.Resampling.LANCZOS)
-            m = Image.fromarray(tgt_mask[box[1]:box[3], box[0]:box[2]].astype(np.uint8) * 255)
+            m = Image.fromarray(tgt_mask[box[1] : box[3], box[0] : box[2]].astype(np.uint8) * 255)
             m = m.resize((ws, ws), Image.Resampling.NEAREST)
 
             rbox = bbox(ref_mask, 0.25, 64)
@@ -92,30 +104,45 @@ class EngineA:
             denoise = c.d_min + (c.d_max - c.d_min) * s
             m_np = np.asarray(m) > 127
             ip_masks = maskproc.preprocess(
-                [Image.fromarray(m_np.astype(np.uint8) * 255),
-                 Image.fromarray((~m_np).astype(np.uint8) * 255)], height=ws, width=ws)
-            ip_masks = [ip_masks.reshape(1, ip_masks.shape[0], ip_masks.shape[2],
-                                         ip_masks.shape[3])]
+                [
+                    Image.fromarray(m_np.astype(np.uint8) * 255),
+                    Image.fromarray((~m_np).astype(np.uint8) * 255),
+                ],
+                height=ws,
+                width=ws,
+            )
+            ip_masks = [
+                ip_masks.reshape(1, ip_masks.shape[0], ip_masks.shape[2], ip_masks.shape[3])
+            ]
             pipe = self.stack.inpaint
             pipe.set_ip_adapter_scale([[ip_region, c.global_ip_scale]])
             gen = torch.Generator("cuda").manual_seed(seed)
-            res = pipe(prompt=c.prompt, negative_prompt=c.negative_prompt,
-                       image=crop_out, mask_image=m, control_image=control_image(crop_draft),
-                       ip_adapter_image=[[ref_crop, ref]],
-                       cross_attention_kwargs={"ip_adapter_masks": ip_masks},
-                       strength=denoise, controlnet_conditioning_scale=c.structure_strength,
-                       num_inference_steps=c.steps, guidance_scale=c.guidance,
-                       width=ws, height=ws, generator=gen).images[0]
+            res = pipe(
+                prompt=c.prompt,
+                negative_prompt=c.negative_prompt,
+                image=crop_out,
+                mask_image=m,
+                control_image=control_image(crop_draft),
+                ip_adapter_image=[[ref_crop, ref]],
+                cross_attention_kwargs={"ip_adapter_masks": ip_masks},
+                strength=denoise,
+                controlnet_conditioning_scale=c.structure_strength,
+                num_inference_steps=c.steps,
+                guidance_scale=c.guidance,
+                width=ws,
+                height=ws,
+                generator=gen,
+            ).images[0]
 
             # paste back with a feathered mask
             bw, bh = box[2] - box[0], box[3] - box[1]
             patch = res.resize((bw, bh), Image.Resampling.LANCZOS)
             alpha_full = feather(tgt_mask, c.feather_sigma)
-            alpha = alpha_full[box[1]:box[3], box[0]:box[2]][..., None]
+            alpha = alpha_full[box[1] : box[3], box[0] : box[2]][..., None]
             base = np.asarray(out, dtype=np.float32)
-            region = base[box[1]:box[3], box[0]:box[2]]
+            region = base[box[1] : box[3], box[0] : box[2]]
             blended = region * (1 - alpha) + np.asarray(patch, dtype=np.float32) * alpha
-            base[box[1]:box[3], box[0]:box[2]] = blended
+            base[box[1] : box[3], box[0] : box[2]] = blended
             out = Image.fromarray(np.clip(base, 0, 255).astype(np.uint8))
 
             layer = Image.new("RGBA", out.size, (0, 0, 0, 0))
@@ -124,10 +151,14 @@ class EngineA:
             layers[reg.region_id] = layer
             masks[reg.region_id] = tgt_mask
             info["regions"][reg.region_id] = {
-                "box": list(box), "ref_box": list(rbox), "ip_scale": round(ip_region, 3),
-                "denoise": round(denoise, 3), "mask_px": int(tgt_mask.sum()),
+                "box": list(box),
+                "ref_box": list(rbox),
+                "ip_scale": round(ip_region, 3),
+                "denoise": round(denoise, 3),
+                "mask_px": int(tgt_mask.sum()),
                 "ref_mask_px": int(ref_mask.sum()),
-                "latency_s": round(time.perf_counter() - t0, 2)}
+                "latency_s": round(time.perf_counter() - t0, 2),
+            }
         info["layers"] = layers
         info["masks"] = masks
         return out, info

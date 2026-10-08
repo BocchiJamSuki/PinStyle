@@ -23,8 +23,9 @@ def _sam(device: str = "cuda"):
     return model.eval(), Sam2Processor.from_pretrained(MODELS / "sam2")
 
 
-def sam_mask(img: Image.Image, positive: Sequence[NormXY],
-             negative: Sequence[NormXY] = ()) -> np.ndarray:
+def sam_mask(
+    img: Image.Image, positive: Sequence[NormXY], negative: Sequence[NormXY] = ()
+) -> np.ndarray:
     """Binary mask (bool HxW) for one object from normalized point prompts."""
     import torch
 
@@ -32,10 +33,15 @@ def sam_mask(img: Image.Image, positive: Sequence[NormXY],
     w, h = img.size
     pts = [[x * w, y * h] for x, y in positive] + [[x * w, y * h] for x, y in negative]
     labels = [1] * len(positive) + [0] * len(negative)
-    inputs = proc(images=img.convert("RGB"), input_points=[[pts]], input_labels=[[labels]],
-                  return_tensors="pt").to(model.device)
-    batch = {k: (v.to(torch.bfloat16) if torch.is_floating_point(v) else v)
-             for k, v in inputs.items()}
+    inputs = proc(
+        images=img.convert("RGB"),
+        input_points=[[pts]],
+        input_labels=[[labels]],
+        return_tensors="pt",
+    ).to(model.device)
+    batch = {
+        k: (v.to(torch.bfloat16) if torch.is_floating_point(v) else v) for k, v in inputs.items()
+    }
     with torch.no_grad():
         out = model(**batch, multimask_output=True)
     masks = proc.post_process_masks(out.pred_masks.float().cpu(), inputs["original_sizes"])[0]

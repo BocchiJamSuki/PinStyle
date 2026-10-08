@@ -54,22 +54,38 @@ def main() -> int:
 
     t = time.perf_counter()
     vae = AutoencoderKL.from_pretrained(M / "vae", torch_dtype=torch.float16)
-    cn = ControlNetModel.from_pretrained(M / "controlnet_lineart", variant="fp16",
-                                         torch_dtype=torch.float16)
-    enc = CLIPVisionModelWithProjection.from_pretrained(M / "ip_adapter/models/image_encoder",
-                                                        torch_dtype=torch.float16)
+    cn = ControlNetModel.from_pretrained(
+        M / "controlnet_lineart", variant="fp16", torch_dtype=torch.float16
+    )
+    enc = CLIPVisionModelWithProjection.from_pretrained(
+        M / "ip_adapter/models/image_encoder", torch_dtype=torch.float16
+    )
     pipe = StableDiffusionXLControlNetPipeline.from_pretrained(
-        M / "sdxl", vae=vae, controlnet=cn, image_encoder=enc, variant="fp16",
-        torch_dtype=torch.float16, add_watermarker=False)
-    pipe.load_ip_adapter(str(M / "ip_adapter"), subfolder="sdxl_models",
-                         weight_name="ip-adapter-plus_sdxl_vit-h.safetensors",
-                         image_encoder_folder=None)
+        M / "sdxl",
+        vae=vae,
+        controlnet=cn,
+        image_encoder=enc,
+        variant="fp16",
+        torch_dtype=torch.float16,
+        add_watermarker=False,
+    )
+    pipe.load_ip_adapter(
+        str(M / "ip_adapter"),
+        subfolder="sdxl_models",
+        weight_name="ip-adapter-plus_sdxl_vit-h.safetensors",
+        image_encoder_folder=None,
+    )
     pipe.to("cuda")
     timings["load_sdxl_stack_s"] = round(time.perf_counter() - t, 1)
     vram["sdxl_stack_incl_cn_ipa_encoder"] = round(gib() - base, 3)
 
-    for name, mod in [("unet", pipe.unet), ("text_encoders", None), ("vae", pipe.vae),
-                      ("controlnet", pipe.controlnet), ("image_encoder", pipe.image_encoder)]:
+    for name, mod in [
+        ("unet", pipe.unet),
+        ("text_encoders", None),
+        ("vae", pipe.vae),
+        ("controlnet", pipe.controlnet),
+        ("image_encoder", pipe.image_encoder),
+    ]:
         if name == "text_encoders":
             mods = [pipe.text_encoder, pipe.text_encoder_2]
         else:
@@ -81,9 +97,15 @@ def main() -> int:
     pipe.set_ip_adapter_scale(0.6)
     torch.cuda.reset_peak_memory_stats()
     t = time.perf_counter()
-    out = pipe(prompt="a colorful illustration", image=img, ip_adapter_image=img,
-               num_inference_steps=4, height=512, width=512,
-               generator=torch.Generator("cuda").manual_seed(0)).images[0]
+    out = pipe(
+        prompt="a colorful illustration",
+        image=img,
+        ip_adapter_image=img,
+        num_inference_steps=4,
+        height=512,
+        width=512,
+        generator=torch.Generator("cuda").manual_seed(0),
+    ).images[0]
     timings["gen_512_4steps_s"] = round(time.perf_counter() - t, 2)
     vram["peak_gen_512"] = round(torch.cuda.max_memory_allocated() / 2**30, 3)
 
@@ -92,11 +114,16 @@ def main() -> int:
     sam = Sam2Model.from_pretrained(M / "sam2", torch_dtype=torch.bfloat16).to("cuda")
     proc = Sam2Processor.from_pretrained(M / "sam2")
     vram["sam2"] = round(gib() - before, 3)
-    inputs = proc(images=img, input_points=[[[[256, 316]]]], input_labels=[[[1]]],
-                  return_tensors="pt").to("cuda")
+    inputs = proc(
+        images=img, input_points=[[[[256, 316]]]], input_labels=[[[1]]], return_tensors="pt"
+    ).to("cuda")
     with torch.no_grad():
-        o = sam(**{k: (v.to(torch.bfloat16) if v.dtype == torch.float32 else v)
-                   for k, v in inputs.items()})
+        o = sam(
+            **{
+                k: (v.to(torch.bfloat16) if v.dtype == torch.float32 else v)
+                for k, v in inputs.items()
+            }
+        )
     masks = proc.post_process_masks(o.pred_masks.float().cpu(), inputs["original_sizes"])[0]
     mask_px = int(np.asarray(masks[0, 0]).sum())
     timings["sam2_load_and_mask_s"] = round(time.perf_counter() - t, 2)
@@ -114,15 +141,18 @@ def main() -> int:
     out.save(run_dir / "smoke.png")
     manifest = json.loads((M / "MANIFEST.json").read_text())
     write_record(
-        run_dir, kind="smoke_models", seed=0,
+        run_dir,
+        kind="smoke_models",
+        seed=0,
         models={k: f"{v['repo']}@{v['revision']}" for k, v in manifest.items()},
-        torch=torch.__version__, cuda=torch.version.cuda, device=torch.cuda.get_device_name(0),
-        vram_gib=vram, timings=timings,
-        checks={"sam2_mask_pixels": mask_px,
-                "dinov2_tokens": list(feat.last_hidden_state.shape)},
+        torch=torch.__version__,
+        cuda=torch.version.cuda,
+        device=torch.cuda.get_device_name(0),
+        vram_gib=vram,
+        timings=timings,
+        checks={"sam2_mask_pixels": mask_px, "dinov2_tokens": list(feat.last_hidden_state.shape)},
     )
-    print(json.dumps({"vram_gib": vram, "timings": timings, "sam2_mask_pixels": mask_px},
-                     indent=2))
+    print(json.dumps({"vram_gib": vram, "timings": timings, "sam2_mask_pixels": mask_px}, indent=2))
     print(f"run dir: {run_dir}")
     return 0 if mask_px > 0 else 1
 

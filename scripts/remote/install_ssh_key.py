@@ -29,8 +29,15 @@ def main() -> None:
 
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    client.connect(args.host, port=args.port, username=args.user, password=password,
-                   look_for_keys=False, allow_agent=False, timeout=20)
+    client.connect(
+        args.host,
+        port=args.port,
+        username=args.user,
+        password=password,
+        look_for_keys=False,
+        allow_agent=False,
+        timeout=20,
+    )
     del password
     cmd = (
         "mkdir -p ~/.ssh && chmod 700 ~/.ssh && touch ~/.ssh/authorized_keys && "

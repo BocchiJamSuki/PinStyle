@@ -12,8 +12,14 @@ import numpy as np
 from PIL import Image
 
 
-def extract_lines(img: Image.Image, sigma: float = 1.0, k: float = 1.6, tau: float = 0.98,
-                  eps: float = -0.02, phi: float = 200.0) -> Image.Image:
+def extract_lines(
+    img: Image.Image,
+    sigma: float = 1.0,
+    k: float = 1.6,
+    tau: float = 0.98,
+    eps: float = -0.02,
+    phi: float = 200.0,
+) -> Image.Image:
     """XDoG line extraction. Returns black lines on white ("L" mode)."""
     gray = np.asarray(img.convert("L"), dtype=np.float32) / 255.0
     g1 = cv2.GaussianBlur(gray, (0, 0), sigma)

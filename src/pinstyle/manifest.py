@@ -10,8 +10,18 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_MANIFEST = REPO_ROOT / "assets" / "demo" / "MANIFEST.csv"
 ALLOWED_LICENSES = {"CC0-1.0", "CC-BY-2.0", "CC-BY-3.0", "CC-BY-4.0"}
-REQUIRED = ("id", "file", "author", "license", "source_url", "authorship_evidence",
-            "attribution", "ai_generated", "status", "approved_by")
+REQUIRED = (
+    "id",
+    "file",
+    "author",
+    "license",
+    "source_url",
+    "authorship_evidence",
+    "attribution",
+    "ai_generated",
+    "status",
+    "approved_by",
+)
 
 
 class ManifestError(ValueError):

@@ -41,9 +41,17 @@ def cmd_global(args: argparse.Namespace) -> None:
         out.save(run_dir / "global.png")
         case.draft.save(run_dir / "draft.png")
         ctrl.save(run_dir / "control.png")
-        write_record(run_dir, kind="global", case=case.id, seed=seed,
-                     source=case.source.id, reference=case.reference.id,
-                     draft_source=case.draft_source, models=stack.revisions, **info)
+        write_record(
+            run_dir,
+            kind="global",
+            case=case.id,
+            seed=seed,
+            source=case.source.id,
+            reference=case.reference.id,
+            draft_source=case.draft_source,
+            models=stack.revisions,
+            **info,
+        )
         log.info("%s seed=%d latency=%.1fs -> %s", case.id, seed, info["latency_s"], run_dir)
 
 

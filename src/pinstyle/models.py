@@ -44,17 +44,30 @@ def sdxl_stack(device: str = "cuda") -> Stack:
 
     dt = torch.float16
     vae = AutoencoderKL.from_pretrained(MODELS / "vae", torch_dtype=dt)
-    cn = ControlNetModel.from_pretrained(MODELS / "controlnet_lineart", variant="fp16",
-                                         torch_dtype=dt)
+    cn = ControlNetModel.from_pretrained(
+        MODELS / "controlnet_lineart", variant="fp16", torch_dtype=dt
+    )
     enc = CLIPVisionModelWithProjection.from_pretrained(
-        MODELS / "ip_adapter/models/image_encoder", torch_dtype=dt)
+        MODELS / "ip_adapter/models/image_encoder", torch_dtype=dt
+    )
     pipe = StableDiffusionXLControlNetPipeline.from_pretrained(
-        MODELS / "sdxl", vae=vae, controlnet=cn, image_encoder=enc, variant="fp16",
-        torch_dtype=dt, add_watermarker=False)
+        MODELS / "sdxl",
+        vae=vae,
+        controlnet=cn,
+        image_encoder=enc,
+        variant="fp16",
+        torch_dtype=dt,
+        add_watermarker=False,
+    )
     pipe.scheduler = DPMSolverMultistepScheduler.from_config(
-        pipe.scheduler.config, use_karras_sigmas=True)
-    pipe.load_ip_adapter(str(MODELS / "ip_adapter"), subfolder="sdxl_models",
-                         weight_name=IPA_WEIGHT, image_encoder_folder=None)
+        pipe.scheduler.config, use_karras_sigmas=True
+    )
+    pipe.load_ip_adapter(
+        str(MODELS / "ip_adapter"),
+        subfolder="sdxl_models",
+        weight_name=IPA_WEIGHT,
+        image_encoder_folder=None,
+    )
     pipe.to(device)
     img2img = StableDiffusionXLControlNetImg2ImgPipeline.from_pipe(pipe)
     inpaint = StableDiffusionXLControlNetInpaintPipeline.from_pipe(pipe)
