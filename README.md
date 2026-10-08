@@ -90,18 +90,20 @@ python scripts/make_figure_d3.py runs/<run dir> figure.png
 python scripts/exp_colour.py                # colour vs rendering
 ```
 
-### In the app (Finish tab, case `shichimi_flat`)
+### In the app (Finish tab)
 
-1. Click **Load case**.
+The case `shichimi_flat` loads automatically.
+
+1. Click **Generate**.
 2. Click the ivory horn to the lower right of the blonde girl's head in the **reference**.
-3. Click the white horn beside Shichimi's head in the **draft**.
-4. In the pair table, set tags to `white horn hair ornament`.
-5. Click **Global + PinStyle**. Compare before and after in the slider.
+3. Click the white horn beside Shichimi's head in the **draft**. The pin's tag is pre-filled from the case.
+4. Click **Fix pinned details**. The result is the right side of the before/after slider, saved as `runs/<run>/output.png`.
 
-Two sliders control the global look separately:
-
-- **Rendering from reference:** shading and brushwork.
+- **Fix pinned details** redoes only the pinned regions of the latest result. Click it again to keep refining.
+- **Generate + fix** does both steps in one click.
 - **Colour from reference:** 0 keeps the draft's colours.
+- **Advanced settings** (collapsed): prompt, generation mode, rendering, structure, steps, seed and resolution.
+- **History** (collapsed): earlier versions, and an A/B comparison.
 
 ### Comparison with external services (paid; D5 only)
 

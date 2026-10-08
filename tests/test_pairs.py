@@ -7,10 +7,13 @@ from pinstyle.app.pairs import (
     click_tgt,
     delete,
     draw_markers,
+    from_compact,
     from_table,
     normalize,
+    to_compact,
     to_engine,
     to_table,
+    undo,
 )
 
 
@@ -49,8 +52,29 @@ def test_delete_keeps_ids_unique():
     assert [p.id for p in s.pairs] == ["p2", "p3"]
 
 
-def test_clear():
-    assert clear(two_pairs()) == PairState()
+def test_clear_keeps_default_tags():
+    s = clear(PairState(default_tags="horn"))
+    assert s.pairs == () and s.default_tags == "horn"
+    assert clear(two_pairs()).pairs == ()
+
+
+def test_undo_cancels_pending_then_removes_last():
+    s = click_ref(two_pairs(), (0.9, 0.9))
+    s = undo(s)
+    assert s.pending_ref is None and len(s.pairs) == 2
+    s = undo(s)
+    assert [p.id for p in s.pairs] == ["p1"]
+    assert undo(undo(s)).pairs == ()
+
+
+def test_compact_table_edits_tags_only():
+    s = two_pairs()
+    rows = to_compact(s)
+    assert rows == [["p1", ""], ["p2", ""]]
+    rows[1][1] = "white horn hair ornament"
+    s2 = from_compact(s, rows)
+    assert s2.pairs[1].tags == "white horn hair ornament"
+    assert s2.pairs[1].tgt_xy == s.pairs[1].tgt_xy and s2.pairs[0].tags == ""
 
 
 def test_table_edits_strength_group_tags_and_clamps():

@@ -66,7 +66,27 @@ def delete(state: PairState, pair_id: str) -> PairState:
 
 
 def clear(state: PairState) -> PairState:
-    return PairState()
+    return PairState(default_tags=state.default_tags)
+
+
+def undo(state: PairState) -> PairState:
+    """Cancel a pending reference click, or else remove the last pair."""
+    if state.pending_ref is not None:
+        return replace(state, pending_ref=None)
+    return replace(state, pairs=state.pairs[:-1])
+
+
+COMPACT_HEADERS = ["pair", "what to fix (tags)"]
+
+
+def to_compact(state: PairState) -> list[list]:
+    return [[p.id, p.tags] for p in state.pairs]
+
+
+def from_compact(state: PairState, rows: list[list]) -> PairState:
+    """Apply tag edits from the compact table; ids are not editable."""
+    tags = {str(r[0]): str(r[1] or "") for r in rows if r and r[0] not in (None, "")}
+    return replace(state, pairs=tuple(replace(p, tags=tags.get(p.id, p.tags)) for p in state.pairs))
 
 
 def to_table(state: PairState) -> list[list]:

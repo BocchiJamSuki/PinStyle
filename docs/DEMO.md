@@ -10,10 +10,10 @@
 
 | Time | Say | Do |
 |---|---|---|
-| 0:00–0:20 | "End-to-end tools finish a whole image at once, and small details the artist cares about get lost or redrawn. PinStyle lets the artist pin which part of *their own* finished work should inform which part of the new draft." | Show the Finish tab with case `shichimi_flat` loaded: draft on the right, the artist's own finished work on the left. |
-| 0:20–0:40 | "This is the global pass: the draft finished in the style of the reference. Look at the horn ornament by her head." | Show the before/after slider from the pre-run global pass. Zoom on the ornament, which is plain or misrendered. |
-| 0:40–1:10 | "One click on the reference's ornament, one click on the draft's ornament: that is the whole instruction." | Click the ivory horn beside the blonde girl in the reference, then the white horn in the draft. Type `white horn hair ornament` in tags. Press **PinStyle on current output**. |
-| 1:10–1:30 | "Only that region changes. It is rendered the way *my* reference renders it, as carved ivory. Everything else is untouched: SSIM outside the region is 0.9999 or higher in the logged runs." | Show the after image. Zoom on the carved horn. Then the Versions tab, comparing two versions. |
+| 0:00–0:20 | "End-to-end tools finish a whole image at once, and small details the artist cares about get lost or redrawn. PinStyle lets the artist pin which part of *their own* finished work should inform which part of the new draft." | Show the Finish tab. Case `shichimi_flat` loads automatically: the artist's own finished work on the left, the draft on the right. |
+| 0:20–0:40 | "This is the global pass: the draft finished in the style of the reference. Look at the horn ornament by her head." | Show the before/after slider from the pre-run **Generate**. Zoom on the ornament, which is plain or misrendered. |
+| 0:40–1:10 | "One click on the reference's ornament, one click on the draft's ornament: that is the whole instruction." | Click the ivory horn beside the blonde girl in the reference, then the white horn in the draft. The tag is pre-filled. Press **Fix pinned details**. |
+| 1:10–1:30 | "Only that region changes. It is rendered the way *my* reference renders it, as carved ivory. Everything else is untouched: SSIM outside the region is 0.9999 or higher in the logged runs." | Show the after image. Zoom on the carved horn. Then **History**, comparing two versions. |
 | 1:30–1:50 | "In blind review, the two commercial services either ignored the draft or ignored the reference. And the reviewers disagreed on whether colours should follow the draft or the reference, so the app now gives that choice to the artist." | Show the D5 grid. Move the **Colour from reference** slider and say what it does. |
 | 1:50–2:00 | "No per-artist training, local-first, own work only. Registry and provenance are next." | Open the Governance (concept) tab. |
 
