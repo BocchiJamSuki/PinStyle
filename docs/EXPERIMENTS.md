@@ -179,7 +179,7 @@ The score under-counts, because the re-rendered ribbon does not sit exactly on t
 | 2026-10-08T11:01:56Z | alibaba | qwen-image-edit-plus-2025-12-15 | pepper_bergen_flat | 2 | 86b104e1-9dd9-9858-813d-759eafe70190 | 0.2 | 1.2 |
 | 2026-10-08T11:02:13Z | alibaba | qwen-image-edit-plus-2025-12-15 | pepper_bergen_flat | 3 | b89234be-5a88-9603-b753-54406639801a | 0.2 | 1.4 |
 
-**Tencent `hy-image-v3`:** not run. The trial call returned HTTP 402: "No free trial quota is available for the service and postpaid billing is not enabled". TokenHub needs postpaid billing enabled in the console (Online Inference Service). This is an owner action. Nothing was charged.
+**Tencent `hy-image-v3`:** the first trial returned HTTP 402 (postpaid billing not enabled; nothing charged). The owner enabled it, and the run went ahead.
 
 **Alibaba `qwen-image-edit-plus-2025-12-15`**
 
@@ -198,3 +198,34 @@ The score under-counts, because the re-rendered ribbon does not sit exactly on t
 - Taxonomy: structure change and not controllable, in 6/6.
 - Grid: `local_runs/d5_alibaba.jpg`.
 - **Limit:** image order may matter. The draft-last order follows the documentation, and no further attempts were made, per the 3-attempt cap.
+
+## D5 — Tencent `hy-image-v3` (2026-10-08)
+
+**Ledger rows:**
+
+| UTC | Provider | Model | Case | Attempt | Request ID | CNY | Running total |
+|---|---|---|---|---|---|---|---|
+| 2026-10-08T11:04:37Z | tencent | hy-image-v3 | shichimi_flat | 0 | b18adad1-f5f1-4b54-9b73-0a7372a3d2f2 | 0.2 | 0.2 |
+| 2026-10-08T11:05:28Z | tencent | hy-image-v3 | shichimi_flat | 2 | ede8518e-99aa-4b8d-84b1-93b81becd637 | 0.2 | 0.4 |
+| 2026-10-08T11:05:48Z | tencent | hy-image-v3 | shichimi_flat | 3 | e0a6f56c-31c6-444e-b2d7-d717762b86b2 | 0.2 | 0.6 |
+| 2026-10-08T11:06:10Z | tencent | hy-image-v3 | pepper_bergen_flat | 1 | cd397a18-10d1-4f16-8643-5af704e347aa | 0.2 | 0.8 |
+| 2026-10-08T11:06:32Z | tencent | hy-image-v3 | pepper_bergen_flat | 2 | f6bd83ad-6edf-436a-bf11-bf57c71c8373 | 0.2 | 1.0 |
+| 2026-10-08T11:06:54Z | tencent | hy-image-v3 | pepper_bergen_flat | 3 | e17f27f8-cdbc-47ec-b17d-adbdebd0d986 | 0.2 | 1.2 |
+
+- The trial (attempt 0) used the final template, with seed 1. That is exactly attempt 1 of `shichimi_flat` (Tencent's minimum seed is 1), so attempt 1 was served from the cache and not sent again.
+- Inputs: the draft first, then the reference. One image per call: 720×1024 (Shichimi), 1024×1024 (Pepper).
+- The response has no `model` field. `tokenhub_usage.total_tokens` = 20000 per image, which is CNY 0.2 at the listed price.
+- **Spend:** Tencent CNY 1.20, Alibaba CNY 1.40, both within the CNY 4.00 cap.
+
+**Outcome (visual, developer; blind review pending; grid `local_runs/d5_tencent.jpg`)**
+
+- In 6/6 attempts, the output keeps the draft's composition, characters and details, including the horn ornament and the red ribbon. The hair stays white for Shichimi.
+- Shichimi's horn is always a plain white horn. In attempts 2–3 it gains a gold band. It is never the reference's carved ivory with engraved swirls, even though attempts 2–3 ask for it to be "rendered like the same ornament" in the reference.
+- How much of the reference's overall style is adopted is left to the blind review. The Pepper outputs look closer to the source painting than to the 2017 portrait.
+- **Validity note:** the flat draft is derived from the finished work, so it already carries the original colours. A service that re-renders the draft faithfully therefore "keeps" details easily. This favours draft-faithful methods and is stated in the report.
+
+**Blind review set:** `python scripts/make_review.py` builds `local_runs/review/index.html` from `configs/review.yaml`.
+
+- 24 items: 2 cases × 4 methods × 3 attempts, shuffled with seed 20261008 and with the method names hidden.
+- The key is in `runs/d5/review_key.json`.
+- `--reveal` joins the labels after the review.
